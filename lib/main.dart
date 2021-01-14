@@ -7,19 +7,18 @@ import 'home.dart';
 void main() {
   runApp(MaterialApp(
     title: "NewsApp",
-    home: Login(),
+    home: LoginPage(),
     theme: ThemeData(primaryColor: getAppThemeColor()),
   ));
 }
 
-class Login extends StatefulWidget {
+class LoginPage extends StatefulWidget {
   @override
-  _LoginState createState() => _LoginState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginState extends State<Login> {
+class _LoginPageState extends State<LoginPage> {
   final _loginFormKey = GlobalKey<FormState>();
-  final _scaffoldStateKey = GlobalKey<ScaffoldState>();
   final _loginFontStyle = TextStyle(fontSize: 16);
   final _emailTextEditingController = TextEditingController();
   final _passwordTextEditingController = TextEditingController();
@@ -35,17 +34,13 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldStateKey,
       body: Container(
         alignment: Alignment.center,
         padding: EdgeInsets.all(50),
         child: Form(
             key: _loginFormKey,
             child: ListView(shrinkWrap: true, children: [
-              Image(
-                  width: 100,
-                  height: 100,
-                  image: AssetImage("assets/ic_news.png")),
+              _getLoginLogo(),
               Padding(padding: EdgeInsets.fromLTRB(0, 32, 0, 0)),
               TextFormField(
                 autofocus: false,
@@ -79,9 +74,7 @@ class _LoginState extends State<Login> {
                         onPressed: _showPassword),
                     labelText: "Password",
                     hintText: "Enter password"),
-                validator: (value) {
-                  return _validatePassword(value);
-                },
+                validator: _validatePassword,
               ),
               Padding(padding: EdgeInsets.fromLTRB(0, 32, 0, 0)),
               SizedBox(
@@ -110,7 +103,7 @@ class _LoginState extends State<Login> {
   }
 
   void _loginUser(String email, String password) {
-    final user = getUsers().singleWhere(
+    final user = getUsers().firstWhere(
         (element) => element.email.toLowerCase() == email.trim().toLowerCase(),
         orElse: () => null);
     if (user == null) {
@@ -127,7 +120,7 @@ class _LoginState extends State<Login> {
   void _pushHome() {
     Navigator.of(context).pop();
     Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
-      return Home();
+      return HomePage();
     }));
   }
 
@@ -138,5 +131,10 @@ class _LoginState extends State<Login> {
       return "Password should be at least 5 characters long";
     }
     return null;
+  }
+
+  Widget _getLoginLogo() {
+    return Image(
+        width: 100, height: 100, image: AssetImage("assets/ic_news.png"));
   }
 }

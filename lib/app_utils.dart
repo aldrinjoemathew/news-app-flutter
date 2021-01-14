@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-Color getAppThemeColor() {
-  return Colors.green;
+MaterialColor getAppThemeColor() {
+  return Colors.brown;
 }
 
 void showOkAlert(BuildContext context, String title, String msg) {
