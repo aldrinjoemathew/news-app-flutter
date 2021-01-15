@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 MaterialColor getAppThemeColor() {
   return Colors.brown;
@@ -45,4 +46,15 @@ void showBottomSheet(String text, ScaffoldState scaffoldState) {
       ),
     ),
   ));
+}
+
+void setLoggedIn(String email) {
+  SharedPreferences.getInstance().then((prefs) {
+    prefs.setString("email", email);
+  });
+}
+
+Future<bool> isLoggedIn() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString("email")?.isNotEmpty == true;
 }

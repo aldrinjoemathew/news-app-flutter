@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:news_app/models/news_models.dart';
+import 'package:news_app/user_settings.dart';
 
 import 'app_utils.dart';
 import 'news_list.dart';
 
 class HomePage extends StatefulWidget {
-  final _pages = [
-    NewsListPage(getNewsList()),
-    Text("Favorites"),
-    Text("Settings")
-  ];
+  final _pages = [NewsListPage(), Text("Favorites"), UserSettingsPage()];
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -26,7 +22,6 @@ class _HomePageState extends State<HomePage> {
       ),
       body: widget._pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
-        selectedFontSize: 16,
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.white60,
@@ -35,11 +30,19 @@ class _HomePageState extends State<HomePage> {
         showUnselectedLabels: false,
         onTap: _onTabSelected,
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.list), label: "News"),
           BottomNavigationBarItem(
-              icon: Icon(Icons.favorite), label: "Favorites"),
+              icon: ImageIcon(AssetImage("assets/ic_news_list.png")),
+              activeIcon:
+                  ImageIcon(AssetImage("assets/ic_news_list_active.png")),
+              label: "News"),
           BottomNavigationBarItem(
-              icon: Icon(Icons.settings), label: "Settings"),
+              activeIcon: Icon(Icons.favorite),
+              icon: Icon(Icons.favorite_border),
+              label: "Favorites"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.settings_outlined),
+              activeIcon: Icon(Icons.settings),
+              label: "Settings"),
         ],
       ),
     );

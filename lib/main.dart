@@ -4,12 +4,21 @@ import 'package:news_app/models/users.dart';
 import 'app_utils.dart';
 import 'home.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final initialPage = await _getInitialPage();
   runApp(MaterialApp(
     title: "NewsApp",
-    home: LoginPage(),
+    home: initialPage,
     theme: ThemeData(primaryColor: getAppThemeColor()),
   ));
+}
+
+Future<Widget> _getInitialPage() async {
+  if (await isLoggedIn())
+    return HomePage();
+  else
+    return LoginPage();
 }
 
 class LoginPage extends StatefulWidget {
@@ -91,6 +100,29 @@ class _LoginPageState extends State<LoginPage> {
                   },
                 ),
               ),
+              SizedBox(
+                height: 16,
+              ),
+              GestureDetector(
+                child: Text(
+                  "Forgot password?",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      decoration: TextDecoration.underline,
+                      fontWeight: FontWeight.bold),
+                ),
+                onTap: _pushPasswordResetPage,
+              ),
+              SizedBox(
+                height: 16,
+              ),
+              Text(
+                "Don't have an account? Sign up",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    decoration: TextDecoration.underline,
+                    fontWeight: FontWeight.bold),
+              )
             ])),
       ),
     );
@@ -103,8 +135,9 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _loginUser(String email, String password) {
+    email = email.trim().toLowerCase();
     final user = getUsers().firstWhere(
-        (element) => element.email.toLowerCase() == email.trim().toLowerCase(),
+        (element) => element.email.toLowerCase() == email,
         orElse: () => null);
     if (user == null) {
       showOkAlert(context, "Error", "User not found");
@@ -114,12 +147,12 @@ class _LoginPageState extends State<LoginPage> {
       showOkAlert(context, "Error", "Password incorrect");
       return;
     }
-    _pushHome();
+    setLoggedIn(email);
+    _pushHomePage();
   }
 
-  void _pushHome() {
-    Navigator.of(context).pop();
-    Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
+  void _pushHomePage() {
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (ctx) {
       return HomePage();
     }));
   }
@@ -136,5 +169,9 @@ class _LoginPageState extends State<LoginPage> {
   Widget _getLoginLogo() {
     return Image(
         width: 100, height: 100, image: AssetImage("assets/ic_news.png"));
+  }
+
+  void _pushPasswordResetPage() {
+    print("Reset password page");
   }
 }
