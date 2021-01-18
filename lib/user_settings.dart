@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:news_app/app_utils.dart';
 import 'package:news_app/models/users.dart';
+import 'package:news_app/utils/app_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'main.dart';
+import 'login.dart';
 
 class UserSettingsPage extends StatefulWidget {
   @override
@@ -54,7 +54,11 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
           ),
           ElevatedButton(
               onPressed: _logout,
-              style: ElevatedButton.styleFrom(primary: getAppThemeColor()),
+              style: ElevatedButton.styleFrom(
+/*
+                primary: getAppThemeColor(),
+*/
+                  ),
               child: Text("Log out"))
         ],
       ),

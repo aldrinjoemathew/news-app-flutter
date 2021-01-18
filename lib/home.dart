@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:news_app/user_settings.dart';
 
-import 'app_utils.dart';
 import 'news_list.dart';
 
 class HomePage extends StatefulWidget {
   final _pages = [NewsListPage(), Text("Favorites"), UserSettingsPage()];
+  final _titles = ["News", "Favorites", "Settings"];
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -18,14 +18,11 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("News"),
+        title: Text(widget._titles[_selectedIndex]),
       ),
       body: widget._pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white60,
-        backgroundColor: getAppThemeColor(),
         showSelectedLabels: false,
         showUnselectedLabels: false,
         onTap: _onTabSelected,

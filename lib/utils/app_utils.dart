@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-MaterialColor getAppThemeColor() {
-  return Colors.brown;
+import 'app_theme_utils.dart';
+
+Color getAppThemeColor() {
+  return AppColors.darkOlive;
 }
 
 void showOkAlert(BuildContext context, String title, String msg) {

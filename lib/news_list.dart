@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:news_app/app_utils.dart';
 import 'package:news_app/models/news_models.dart';
 
 class NewsListPage extends StatefulWidget {
@@ -10,36 +9,46 @@ class NewsListPage extends StatefulWidget {
 }
 
 class _NewsListPageState extends State<NewsListPage> {
+  bool _loading = true;
   List<NewsArticle> _newsList = <NewsArticle>[];
 
   @override
   void initState() {
-    getNewsList(context).then((value) {
-      setState(() {
-        _newsList = value;
-      });
-    });
+    _loadNews();
     super.initState();
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final li = <ListTile>[];
+    final List<Widget> stackChildren = [
+      ListView.builder(
+        addAutomaticKeepAlives: false,
+        itemBuilder: (ctx, index) {
+          final newsItem = _newsList[index];
+          return GestureDetector(
+            child: NewsListItem(newsItem),
+            onTap: () {
+              _onTapNewsItem(newsItem);
+            },
+          );
+        },
+        itemCount: _newsList.length,
+      )
+    ];
+    if (_loading) {
+      stackChildren.add(Center(
+        child: CircularProgressIndicator(),
+      ));
+    }
     return Container(
-        color: getAppThemeColor()[50],
-        child: ListView.builder(
-          addAutomaticKeepAlives: false,
-          itemBuilder: (ctx, index) {
-            final newsItem = _newsList[index];
-            return GestureDetector(
-              child: NewsListItem(newsItem),
-              onTap: () {
-                _onTapNewsItem(newsItem);
-              },
-            );
-          },
-          itemCount: _newsList.length,
-        ));
+        child: Stack(
+      children: stackChildren,
+    ));
   }
 
   void _onTapNewsItem(NewsArticle newsItem) {
@@ -48,6 +57,19 @@ class _NewsListPageState extends State<NewsListPage> {
       showOkAlert(context, newsItem.title ?? "", newsItem.description ?? "");
     }
 */
+  }
+
+  @override
+  void setState(fn) {
+    if (this.mounted) super.setState(fn);
+  }
+
+  void _loadNews() async {
+    final result = await getNewsList(context);
+    setState(() {
+      _newsList = result;
+      _loading = false;
+    });
   }
 }
 
@@ -81,7 +103,10 @@ class NewsListItem extends StatelessWidget {
       childWidgets.add(Text(
         newsItem.description ?? "",
         maxLines: 3,
-        style: TextStyle(fontSize: 16),
+        style: TextStyle(
+          fontSize: 16,
+        ),
+        overflow: TextOverflow.ellipsis,
       ));
     }
   }
@@ -91,10 +116,12 @@ class NewsListItem extends StatelessWidget {
     final List<Widget> childWidgets = [
       Text(
         newsItem.title,
+        maxLines: 2,
         style: TextStyle(
-          fontSize: 20,
+          fontSize: 18,
           fontWeight: FontWeight.w500,
         ),
+        overflow: TextOverflow.ellipsis,
       )
     ];
     _addImage(childWidgets);
@@ -105,7 +132,6 @@ class NewsListItem extends StatelessWidget {
         Padding(
           padding: EdgeInsets.all(4),
           child: IconButton(
-            color: getAppThemeColor(),
             icon: Icon(Icons.favorite_border),
             onPressed: () {},
           ),
@@ -113,7 +139,6 @@ class NewsListItem extends StatelessWidget {
         Padding(
           padding: EdgeInsets.all(4),
           child: IconButton(
-            color: getAppThemeColor(),
             icon: Icon(Icons.share),
             onPressed: () {},
           ),
@@ -121,14 +146,12 @@ class NewsListItem extends StatelessWidget {
       ],
     ));
     return Card(
-      shadowColor: getAppThemeColor(),
-      elevation: 0,
+      elevation: 2,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(8))),
       margin: EdgeInsets.fromLTRB(8, 4, 8, 4),
-      color: getAppThemeColor()[100],
       child: Padding(
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.fromLTRB(16, 16, 16, 4),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: childWidgets,
