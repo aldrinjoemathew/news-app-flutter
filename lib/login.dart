@@ -127,7 +127,7 @@ class _LoginPageState extends State<LoginPage> {
       setLoading(false);
       return;
     }
-    // setLoggedIn(email);
+    setLoggedIn(email);
     await Future.delayed(Duration(seconds: 3));
     setLoading(false);
     _pushHomePage();

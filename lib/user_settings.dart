@@ -54,11 +54,6 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
           ),
           ElevatedButton(
               onPressed: _logout,
-              style: ElevatedButton.styleFrom(
-/*
-                primary: getAppThemeColor(),
-*/
-                  ),
               child: Text("Log out"))
         ],
       ),
@@ -75,10 +70,9 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
   void _getUserDetails() async {
     prefs = await SharedPreferences.getInstance();
     final email = prefs.getString("email");
-    print(email);
     setState(() {
       _user = getUsers()
-          .firstWhere((element) => element.email == email, orElse: null);
+          .firstWhere((element) => element.email == email, orElse: () => null);
     });
   }
 }
