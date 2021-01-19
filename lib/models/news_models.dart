@@ -1,6 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
+import 'package:news_app/models/resource.dart';
+import 'package:news_app/utils/app_utils.dart';
 
 // To parse this JSON data, do
 //
@@ -111,4 +115,31 @@ Future<List<NewsArticle>> getNewsList(BuildContext context) async {
   }
   await Future.delayed(Duration(seconds: 3));
   return articles;
+}
+
+const NEWS_URL =
+    'https://newsapi.org/v2/top-headlines?country=in&apiKey=96c1c14cda3d41fd8a1af286982fa02e&pageSize=10';
+
+Future<Resource<List<NewsArticle>>> fetchNews() async {
+  if (!await hasNetworkConnection()) {
+    return Resource.failure("No internet connection");
+  }
+  try {
+    var articles = new List<NewsArticle>();
+    final response = await http.get(NEWS_URL);
+    if (response.statusCode == 200 &&
+        response.body != null &&
+        response.body.isNotEmpty) {
+      final newsJsonList = jsonDecode(response.body)['articles'];
+      for (final item in newsJsonList) {
+        articles.add(NewsArticle.fromJson(item));
+      }
+      return Resource.success(articles);
+    } else {
+      return Resource.failure(response.body);
+    }
+  } catch (e) {
+    print(e.toString());
+  }
+  return Resource.failure("Unknown error");
 }

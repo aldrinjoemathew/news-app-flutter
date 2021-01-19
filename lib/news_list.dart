@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:news_app/models/news_models.dart';
+import 'package:news_app/utils/app_theme_utils.dart';
 
 class NewsListPage extends StatefulWidget {
 
@@ -11,6 +12,7 @@ class NewsListPage extends StatefulWidget {
 class _NewsListPageState extends State<NewsListPage> {
   bool _loading = true;
   List<NewsArticle> _newsList = <NewsArticle>[];
+  String _error = "";
 
   @override
   void initState() {
@@ -25,8 +27,9 @@ class _NewsListPageState extends State<NewsListPage> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> stackChildren = [
-      ListView.builder(
+    final List<Widget> stackChildren = [];
+    if (_newsList != null && _newsList.isNotEmpty) {
+      stackChildren.add(ListView.builder(
         addAutomaticKeepAlives: false,
         itemBuilder: (ctx, index) {
           final newsItem = _newsList[index];
@@ -38,8 +41,15 @@ class _NewsListPageState extends State<NewsListPage> {
           );
         },
         itemCount: _newsList.length,
-      )
-    ];
+      ));
+    } else {
+      stackChildren.add(Center(
+        child: Text(
+          _error ?? "No data available",
+          style: TextStyle(fontSize: 20, color: AppColors.darkKhaki),
+        ),
+      ));
+    }
     if (_loading) {
       stackChildren.add(Center(
         child: CircularProgressIndicator(),
@@ -65,11 +75,19 @@ class _NewsListPageState extends State<NewsListPage> {
   }
 
   void _loadNews() async {
-    final result = await getNewsList(context);
-    setState(() {
-      _newsList = result;
-      _loading = false;
-    });
+    final result = await fetchNews();
+    print("newResponse => ${result.status}");
+    if (result.isSuccess()) {
+      setState(() {
+        _newsList = result.data;
+        _loading = false;
+      });
+    } else if (result.isFailure()) {
+      setState(() {
+        _error = result.error;
+        _loading = false;
+      });
+    }
   }
 }
 

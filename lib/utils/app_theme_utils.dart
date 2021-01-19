@@ -11,14 +11,18 @@ ThemeData buildAppTheme() {
     scaffoldBackgroundColor: AppColors.surfaceWhite,
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: AppColors.darkOlive,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: AppColors.darkKhaki),
-    cardColor: AppColors.surfaceWhite,
-    textSelectionColor: AppColors.lightSteelBlue,
-    errorColor: AppColors.errorRed,
-    primaryIconTheme: _customIconTheme(base.iconTheme),
-    iconTheme: _customIconTheme(base.iconTheme),
-  );
+          selectedItemColor: Colors.white,
+          unselectedItemColor: AppColors.darkKhaki),
+      cardColor: AppColors.surfaceWhite,
+      textSelectionColor: AppColors.lightSteelBlue,
+      errorColor: AppColors.errorRed,
+      primaryIconTheme: _customIconTheme(base.iconTheme),
+      iconTheme: _customIconTheme(base.iconTheme),
+      textTheme: _getTextTheme(base.textTheme));
+}
+
+TextTheme _getTextTheme(TextTheme base) {
+  return base.apply(fontFamily: "Raleway");
 }
 
 IconThemeData _customIconTheme(IconThemeData original) {

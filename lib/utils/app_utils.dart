@@ -1,3 +1,4 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -59,4 +60,14 @@ void setLoggedIn(String email) {
 Future<bool> isLoggedIn() async {
   final prefs = await SharedPreferences.getInstance();
   return prefs.getString("email")?.isNotEmpty == true;
+}
+
+Future<bool> hasNetworkConnection() async {
+  final result = await Connectivity().checkConnectivity();
+  // print("hasConnection => $result");
+  if (result == ConnectivityResult.mobile ||
+      result == ConnectivityResult.wifi) {
+    return true;
+  }
+  return false;
 }
