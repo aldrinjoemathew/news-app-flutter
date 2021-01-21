@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 ThemeData buildAppTheme() {
   final ThemeData base = ThemeData.light();
   return base.copyWith(
-      appBarTheme:
-          AppBarTheme(iconTheme: IconThemeData(color: AppColors.white)),
+      appBarTheme: AppBarTheme(
+          iconTheme: IconThemeData(color: AppColors.white),
+          actionsIconTheme: IconThemeData(color: AppColors.white)),
       colorScheme: _shrineColorScheme,
       toggleableActiveColor: AppColors.lightSteelBlue,
       accentColor: AppColors.lightSteelBlue,

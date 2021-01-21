@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:news_app/utils/app_theme_utils.dart';
+import 'package:news_app/utils/app_utils.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import 'models/news_models.dart';
@@ -53,8 +54,54 @@ class NewsDetailPage extends StatelessWidget {
         ),
       )
     ];
+    childWidgets.add(Container(
+      margin: EdgeInsets.only(top: 8),
+      alignment: Alignment.centerLeft,
+      child: Text(
+        "By ${newsItem.author}",
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+    ));
+    childWidgets.add(Container(
+      margin: EdgeInsets.only(top: 8),
+      alignment: Alignment.centerLeft,
+      child: Text(getFormattedDate(newsItem.publishedAt) ?? ""),
+    ));
     _addImage(childWidgets);
     _addContent(childWidgets);
+    // _addReadMore(context, childWidgets);
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("News"),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.open_in_browser,
+              color: AppColors.white,
+            ),
+            onPressed: () {
+              _readMore(context);
+            },
+          )
+        ],
+      ),
+      body: Container(
+        color: AppColors.surfaceBg,
+        padding: EdgeInsets.all(16),
+        child: ListView(
+          children: childWidgets,
+        ),
+      ),
+    );
+  }
+
+  void _readMore(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
+      return NewsWebPage(newsItem.url);
+    }));
+  }
+
+  void _addReadMore(BuildContext context, List<Widget> childWidgets) {
     childWidgets.add(Wrap(
       alignment: WrapAlignment.center,
       children: [
@@ -74,24 +121,6 @@ class NewsDetailPage extends StatelessWidget {
         )
       ],
     ));
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("News"),
-      ),
-      body: Container(
-        color: AppColors.surfaceBg,
-        padding: EdgeInsets.all(16),
-        child: ListView(
-          children: childWidgets,
-        ),
-      ),
-    );
-  }
-
-  void _readMore(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
-      return NewsWebPage(newsItem.url);
-    }));
   }
 }
 

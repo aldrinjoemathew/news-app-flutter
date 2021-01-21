@@ -109,6 +109,30 @@ class Source {
       };
 }
 
+class NewsData {
+  NewsData._privateConstructor();
+
+  static NewsData _instance = NewsData._privateConstructor();
+
+  static NewsData getInstance() => _instance;
+
+  List<NewsArticle> newsList = <NewsArticle>[];
+  List<NewsArticle> favorites = <NewsArticle>[];
+
+  void updateFavorites(NewsArticle newsItem) {
+    if (favorites == null) favorites = <NewsArticle>[];
+    if (isFavorite(newsItem)) {
+      favorites?.remove(newsItem);
+    } else {
+      favorites?.insert(0, newsItem);
+    }
+  }
+
+  bool isFavorite(NewsArticle newsItem) {
+    return favorites?.contains(newsItem) == true;
+  }
+}
+
 Future<List<NewsArticle>> getNewsList(BuildContext context) async {
   final newsJsonString =
       await DefaultAssetBundle.of(context).loadString("assets/news.json");
@@ -151,28 +175,4 @@ Future<Resource<List<NewsArticle>>> fetchNews(bool refresh) async {
     print(e.toString());
   }
   return Resource.failure("Unknown error");
-}
-
-class NewsData {
-  NewsData._privateConstructor();
-
-  static NewsData _instance = NewsData._privateConstructor();
-
-  static NewsData getInstance() => _instance;
-
-  List<NewsArticle> newsList = <NewsArticle>[];
-  List<NewsArticle> favorites = <NewsArticle>[];
-
-  void updateFavorites(NewsArticle newsItem) {
-    if (favorites == null) favorites = <NewsArticle>[];
-    if (isFavorite(newsItem)) {
-      favorites?.remove(newsItem);
-    } else {
-      favorites?.insert(0, newsItem);
-    }
-  }
-
-  bool isFavorite(NewsArticle newsItem) {
-    return favorites?.contains(newsItem) == true;
-  }
 }

@@ -1,7 +1,8 @@
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'app_theme_utils.dart';
 
 Color getAppThemeColor() {
@@ -70,4 +71,27 @@ Future<bool> hasNetworkConnection() async {
     return true;
   }
   return false;
+}
+
+/*
+String getFormattedDate(String utcString) {
+  // sample date: 2021-01-18T08:03:16Z
+  try {
+    final date = DateFormat("yyyy-mm-dd hh:mm:ssZ").parse(utcString);
+    return DateFormat("dd MMM, yyyy hh:mm a").format(date);
+  } on FormatException catch (e) {
+    print("Date format exception: ${e.message}");
+  }
+  return null;
+}
+*/
+
+String getFormattedDate(DateTime utcDateTime) {
+  // sample date: 2021-01-18T08:03:16Z
+  try {
+    return DateFormat("dd MMM, yyyy hh:mm a").format(utcDateTime);
+  } on FormatException catch (e) {
+    print("Date format exception: ${e.message}");
+  }
+  return null;
 }
