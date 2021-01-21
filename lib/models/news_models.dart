@@ -1,11 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:news_app/models/resource.dart';
 import 'package:news_app/utils/app_utils.dart';
-
 // To parse this JSON data, do
 //
 //     final welcome = welcomeFromJson(jsonString);
@@ -82,6 +80,13 @@ class NewsArticle {
         "publishedAt": publishedAt.toIso8601String(),
         "content": content == null ? null : content,
       };
+
+  @override
+  bool operator ==(Object other) {
+    NewsArticle otherNews;
+    if (other is NewsArticle) otherNews = other;
+    return this.url == otherNews?.url;
+  }
 }
 
 class Source {
@@ -120,20 +125,24 @@ Future<List<NewsArticle>> getNewsList(BuildContext context) async {
 const NEWS_URL =
     'https://newsapi.org/v2/top-headlines?country=in&apiKey=96c1c14cda3d41fd8a1af286982fa02e&pageSize=10';
 
-Future<Resource<List<NewsArticle>>> fetchNews() async {
+Future<Resource<List<NewsArticle>>> fetchNews(bool refresh) async {
+  if (!refresh && NewsData.getInstance().newsList?.isNotEmpty == true) {
+    return Resource.success(NewsData.getInstance().newsList);
+  }
   if (!await hasNetworkConnection()) {
     return Resource.failure("No internet connection");
   }
   try {
-    var articles = new List<NewsArticle>();
     final response = await http.get(NEWS_URL);
     if (response.statusCode == 200 &&
         response.body != null &&
         response.body.isNotEmpty) {
       final newsJsonList = jsonDecode(response.body)['articles'];
-      for (final item in newsJsonList) {
-        articles.add(NewsArticle.fromJson(item));
-      }
+      // print("newsJsonList => $newsJsonList");
+      final List<NewsArticle> articles =
+          List.from(newsJsonList).map((e) => NewsArticle.fromJson(e)).toList();
+      print("articles => $articles");
+      NewsData.getInstance().newsList = articles;
       return Resource.success(articles);
     } else {
       return Resource.failure(response.body);
@@ -142,4 +151,28 @@ Future<Resource<List<NewsArticle>>> fetchNews() async {
     print(e.toString());
   }
   return Resource.failure("Unknown error");
+}
+
+class NewsData {
+  NewsData._privateConstructor();
+
+  static NewsData _instance = NewsData._privateConstructor();
+
+  static NewsData getInstance() => _instance;
+
+  List<NewsArticle> newsList = <NewsArticle>[];
+  List<NewsArticle> favorites = <NewsArticle>[];
+
+  void updateFavorites(NewsArticle newsItem) {
+    if (favorites == null) favorites = <NewsArticle>[];
+    if (isFavorite(newsItem)) {
+      favorites?.remove(newsItem);
+    } else {
+      favorites?.insert(0, newsItem);
+    }
+  }
+
+  bool isFavorite(NewsArticle newsItem) {
+    return favorites?.contains(newsItem) == true;
+  }
 }

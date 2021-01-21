@@ -3,17 +3,20 @@ import 'package:flutter/material.dart';
 ThemeData buildAppTheme() {
   final ThemeData base = ThemeData.light();
   return base.copyWith(
-    colorScheme: _shrineColorScheme,
-    toggleableActiveColor: AppColors.lightSteelBlue,
-    accentColor: AppColors.lightSteelBlue,
-    primaryColor: AppColors.darkOlive,
-    buttonColor: AppColors.darkOlive,
-    scaffoldBackgroundColor: AppColors.surfaceWhite,
-    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      appBarTheme:
+          AppBarTheme(iconTheme: IconThemeData(color: AppColors.surfaceWhite)),
+      colorScheme: _shrineColorScheme,
+      toggleableActiveColor: AppColors.lightSteelBlue,
+      accentColor: AppColors.lightSteelBlue,
+      primaryColor: AppColors.darkOlive,
+      buttonColor: AppColors.darkOlive,
+      scaffoldBackgroundColor: AppColors.surfaceWhite,
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: AppColors.darkOlive,
-          selectedItemColor: Colors.white,
-          unselectedItemColor: AppColors.darkKhaki),
-      cardColor: AppColors.surfaceWhite,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: AppColors.darkKhaki,
+      ),
+      cardColor: AppColors.cardColor,
       textSelectionColor: AppColors.lightSteelBlue,
       errorColor: AppColors.errorRed,
       primaryIconTheme: _customIconTheme(base.iconTheme),
@@ -22,7 +25,7 @@ ThemeData buildAppTheme() {
 }
 
 TextTheme _getTextTheme(TextTheme base) {
-  return base.apply(fontFamily: "Raleway");
+  return base.apply(fontFamily: "Merriweather");
 }
 
 IconThemeData _customIconTheme(IconThemeData original) {
@@ -51,7 +54,7 @@ class AppColors {
   static const lightSteelBlue = Color.fromRGBO(170, 240, 209, 1);
   static const beige = Color.fromRGBO(240, 231, 227, 1);
   static const darkKhaki = Color.fromRGBO(168, 117, 80, 1);
-  static const cardColor = Colors.white;
+  static const cardColor = beige;
   static const listBg = lightSteelBlue;
   static const surfaceWhite = Colors.white;
   static const errorRed = Colors.redAccent;

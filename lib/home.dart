@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:news_app/favorites.dart';
 import 'package:news_app/user_settings.dart';
 
 import 'news_list.dart';
 
 class HomePage extends StatefulWidget {
-  final _pages = [NewsListPage(), Text("Favorites"), UserSettingsPage()];
-  final _titles = ["News", "Favorites", "Settings"];
+  final _pages = [
+    NewsListPage(),
+    FavoritePage(),
+    UserSettingsPage(),
+  ];
+  final _titles = [
+    "News",
+    "Favorites",
+    "Settings",
+  ];
 
   @override
   _HomePageState createState() => _HomePageState();

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:news_app/models/news_models.dart';
+import 'package:news_app/news_detail.dart';
 import 'package:news_app/utils/app_theme_utils.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class NewsListPage extends StatefulWidget {
-
-
   @override
   _NewsListPageState createState() => _NewsListPageState();
 }
@@ -13,6 +13,8 @@ class _NewsListPageState extends State<NewsListPage> {
   bool _loading = true;
   List<NewsArticle> _newsList = <NewsArticle>[];
   String _error = "";
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
 
   @override
   void initState() {
@@ -22,6 +24,7 @@ class _NewsListPageState extends State<NewsListPage> {
 
   @override
   void dispose() {
+    _refreshController.dispose();
     super.dispose();
   }
 
@@ -29,18 +32,26 @@ class _NewsListPageState extends State<NewsListPage> {
   Widget build(BuildContext context) {
     final List<Widget> stackChildren = [];
     if (_newsList != null && _newsList.isNotEmpty) {
-      stackChildren.add(ListView.builder(
+      final listView = ListView.builder(
         addAutomaticKeepAlives: false,
         itemBuilder: (ctx, index) {
           final newsItem = _newsList[index];
           return GestureDetector(
-            child: NewsListItem(newsItem),
+            child: NewsListItem(newsItem, _onTapFavorite,
+                NewsData.getInstance().isFavorite(newsItem)),
             onTap: () {
               _onTapNewsItem(newsItem);
             },
           );
         },
         itemCount: _newsList.length,
+      );
+
+      stackChildren.add(SmartRefresher(
+        controller: _refreshController,
+        child: listView,
+        onRefresh: _refreshNews,
+        enablePullDown: true,
       ));
     } else {
       stackChildren.add(Center(
@@ -61,12 +72,16 @@ class _NewsListPageState extends State<NewsListPage> {
     ));
   }
 
+  void _onTapFavorite(NewsArticle newsItem) {
+    setState(() {
+      NewsData.getInstance().updateFavorites(newsItem);
+    });
+  }
+
   void _onTapNewsItem(NewsArticle newsItem) {
-/*
-    if (newsItem.description != null && newsItem.description.isNotEmpty) {
-      showOkAlert(context, newsItem.title ?? "", newsItem.description ?? "");
-    }
-*/
+    Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
+      return NewsDetailPage(newsItem);
+    }));
   }
 
   @override
@@ -75,8 +90,8 @@ class _NewsListPageState extends State<NewsListPage> {
   }
 
   void _loadNews() async {
-    final result = await fetchNews();
-    print("newResponse => ${result.status}");
+    final result = await fetchNews(false);
+    print("loadNews => ${result.status}");
     if (result.isSuccess()) {
       setState(() {
         _newsList = result.data;
@@ -89,12 +104,26 @@ class _NewsListPageState extends State<NewsListPage> {
       });
     }
   }
+
+  void _refreshNews() async {
+    final result = await fetchNews(true);
+    print("refreshNews => ${result.status}");
+    if (result.isSuccess()) {
+      setState(() {
+        _newsList = result.data;
+      });
+      _refreshController.refreshCompleted();
+    }
+  }
 }
 
 class NewsListItem extends StatelessWidget {
   final NewsArticle newsItem;
 
-  NewsListItem(this.newsItem);
+  final OnTapFavorite _onTapFavorite;
+  final bool _isFavorite;
+
+  NewsListItem(this.newsItem, this._onTapFavorite, this._isFavorite);
 
   void _addImage(List<Widget> childWidgets) {
     if (newsItem.urlToImage != null && newsItem.urlToImage.isNotEmpty) {
@@ -137,7 +166,7 @@ class NewsListItem extends StatelessWidget {
         maxLines: 2,
         style: TextStyle(
           fontSize: 18,
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.w700,
         ),
         overflow: TextOverflow.ellipsis,
       )
@@ -150,8 +179,12 @@ class NewsListItem extends StatelessWidget {
         Padding(
           padding: EdgeInsets.all(4),
           child: IconButton(
-            icon: Icon(Icons.favorite_border),
-            onPressed: () {},
+            icon: _isFavorite
+                ? Icon(Icons.favorite)
+                : Icon(Icons.favorite_border),
+            onPressed: () {
+              _onTapFavorite(newsItem);
+            },
           ),
         ),
         Padding(
@@ -178,3 +211,5 @@ class NewsListItem extends StatelessWidget {
     );
   }
 }
+
+typedef void OnTapFavorite(NewsArticle newsArticle);
