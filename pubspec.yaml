@@ -24,3 +24,14 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+  fonts:
+    - family: Merriweather
+      fonts:
+        - asset: fonts/Merriweather-Regular.ttf
+        - asset: fonts/Merriweather-Bold.ttf
+          weight: 700
+        - asset: fonts/Merriweather-Italic.ttf
+          style: italic
+        - asset: fonts/Merriweather-BoldItalic.ttf
+          weight: 700
+          style: italic
