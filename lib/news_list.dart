@@ -180,7 +180,7 @@ class NewsListItem extends StatelessWidget {
           padding: EdgeInsets.all(4),
           child: IconButton(
             icon: _isFavorite
-                ? Icon(Icons.favorite)
+                ? Icon(Icons.favorite, color: AppColors.favoriteRed)
                 : Icon(Icons.favorite_border),
             onPressed: () {
               _onTapFavorite(newsItem);

@@ -4,13 +4,13 @@ ThemeData buildAppTheme() {
   final ThemeData base = ThemeData.light();
   return base.copyWith(
       appBarTheme:
-          AppBarTheme(iconTheme: IconThemeData(color: AppColors.surfaceWhite)),
+          AppBarTheme(iconTheme: IconThemeData(color: AppColors.white)),
       colorScheme: _shrineColorScheme,
       toggleableActiveColor: AppColors.lightSteelBlue,
       accentColor: AppColors.lightSteelBlue,
       primaryColor: AppColors.darkOlive,
       buttonColor: AppColors.darkOlive,
-      scaffoldBackgroundColor: AppColors.surfaceWhite,
+      scaffoldBackgroundColor: AppColors.white,
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: AppColors.darkOlive,
         selectedItemColor: Colors.white,
@@ -37,8 +37,8 @@ const ColorScheme _shrineColorScheme = ColorScheme(
   primaryVariant: AppColors.sienna,
   secondary: AppColors.lightSteelBlue,
   secondaryVariant: AppColors.beige,
-  surface: AppColors.surfaceWhite,
-  background: AppColors.surfaceWhite,
+  surface: AppColors.white,
+  background: AppColors.white,
   error: AppColors.errorRed,
   onPrimary: Colors.white,
   onSecondary: Colors.white,
@@ -56,6 +56,8 @@ class AppColors {
   static const darkKhaki = Color.fromRGBO(168, 117, 80, 1);
   static const cardColor = beige;
   static const listBg = lightSteelBlue;
-  static const surfaceWhite = Colors.white;
+  static const white = Colors.white;
+  static const surfaceBg = beige;
   static const errorRed = Colors.redAccent;
+  static const favoriteRed = Colors.red;
 }

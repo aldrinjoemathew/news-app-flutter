@@ -15,6 +15,7 @@ dependencies:
   http: 0.12.2
   connectivity: 2.0.2
   pull_to_refresh: ^1.6.3
+  webview_flutter: ^1.0.7
 
 dev_dependencies:
   flutter_test:
