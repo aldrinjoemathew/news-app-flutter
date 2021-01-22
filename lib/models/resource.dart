@@ -20,9 +20,16 @@ class Resource<T> {
     this.error = null;
   }
 
+  Resource.empty() {
+    this.status = Status.Empty;
+    this.data = null;
+  }
+
   bool isSuccess() => this.status == Status.Success;
 
   bool isFailure() => this.status == Status.Error;
+
+  bool isEmpty() => this.status == Status.Empty;
 }
 
 enum Status { Success, Error, Loading, Refreshing, LoadingMore, Empty }

@@ -54,14 +54,16 @@ class NewsDetailPage extends StatelessWidget {
         ),
       )
     ];
-    childWidgets.add(Container(
-      margin: EdgeInsets.only(top: 8),
-      alignment: Alignment.centerLeft,
-      child: Text(
-        "By ${newsItem.author}",
-        style: TextStyle(fontWeight: FontWeight.bold),
-      ),
-    ));
+    if (newsItem.author?.isNotEmpty == true) {
+      childWidgets.add(Container(
+        margin: EdgeInsets.only(top: 8),
+        alignment: Alignment.centerLeft,
+        child: Text(
+          "By ${newsItem.author}",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ));
+    }
     childWidgets.add(Container(
       margin: EdgeInsets.only(top: 8),
       alignment: Alignment.centerLeft,

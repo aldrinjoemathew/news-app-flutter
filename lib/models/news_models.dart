@@ -87,6 +87,9 @@ class NewsArticle {
     if (other is NewsArticle) otherNews = other;
     return this.url == otherNews?.url;
   }
+
+  @override
+  int get hashCode => (this.url?.length ?? 0) + (this.title.length ?? 0);
 }
 
 class Source {
@@ -131,48 +134,92 @@ class NewsData {
   bool isFavorite(NewsArticle newsItem) {
     return favorites?.contains(newsItem) == true;
   }
-}
 
-Future<List<NewsArticle>> getNewsList(BuildContext context) async {
-  final newsJsonString =
-      await DefaultAssetBundle.of(context).loadString("assets/news.json");
-  final json = jsonDecode(newsJsonString)['articles'];
-  final newsJsonList = List.from(json);
-  var articles = new List<NewsArticle>();
-  for (final item in newsJsonList) {
-    articles.add(NewsArticle.fromJson(item));
-  }
-  await Future.delayed(Duration(seconds: 3));
-  return articles;
-}
-
-const NEWS_URL =
-    'https://newsapi.org/v2/top-headlines?country=in&apiKey=96c1c14cda3d41fd8a1af286982fa02e&pageSize=10';
-
-Future<Resource<List<NewsArticle>>> fetchNews(bool refresh) async {
-  if (!refresh && NewsData.getInstance().newsList?.isNotEmpty == true) {
-    return Resource.success(NewsData.getInstance().newsList);
-  }
-  if (!await hasNetworkConnection()) {
-    return Resource.failure("No internet connection");
-  }
-  try {
-    final response = await http.get(NEWS_URL);
-    if (response.statusCode == 200 &&
-        response.body != null &&
-        response.body.isNotEmpty) {
-      final newsJsonList = jsonDecode(response.body)['articles'];
-      // print("newsJsonList => $newsJsonList");
-      final List<NewsArticle> articles =
-          List.from(newsJsonList).map((e) => NewsArticle.fromJson(e)).toList();
-      print("articles => $articles");
-      NewsData.getInstance().newsList = articles;
-      return Resource.success(articles);
-    } else {
-      return Resource.failure(response.body);
+  void addNewsArticles(List<NewsArticle> articles) {
+    if (newsList.isEmpty != false) {
+      newsList = [];
     }
-  } catch (e) {
-    print(e.toString());
+    newsList.addAll(articles);
   }
-  return Resource.failure("Unknown error");
+
+  int getPage({int pageSize = 10}) {
+    if (newsList.isEmpty != false) return 1;
+    if (newsList.length % pageSize == 0)
+      return (newsList.length ~/ pageSize) + 1;
+    else
+      return null;
+  }
+}
+
+class NewsRepo {
+  static const NEWS_URL = "https://newsapi.org";
+  static const NEWS_URL_PATH = "/v2/top-headlines";
+  static const NEWS_API_KEY = "96c1c14cda3d41fd8a1af286982fa02e";
+  static const PAGE_SIZE = 10;
+
+  static Future<List<NewsArticle>> getNewsList(BuildContext context) async {
+    final newsJsonString =
+        await DefaultAssetBundle.of(context).loadString("assets/news.json");
+    final json = jsonDecode(newsJsonString)['articles'];
+    final newsJsonList = List.from(json);
+    var articles = new List<NewsArticle>();
+    for (final item in newsJsonList) {
+      articles.add(NewsArticle.fromJson(item));
+    }
+    await Future.delayed(Duration(seconds: 3));
+    return articles;
+  }
+
+  static Future<Resource<List<NewsArticle>>> fetchNews(
+      {bool refresh = false, bool paginate = false}) async {
+    if (!refresh &&
+        !paginate &&
+        NewsData.getInstance().newsList?.isNotEmpty == true) {
+      return Resource.success(NewsData.getInstance().newsList);
+    }
+    if (!await hasNetworkConnection()) {
+      return Resource.failure("No internet connection");
+    }
+    try {
+      int page = 1;
+      if (paginate) page = NewsData.getInstance().getPage(pageSize: PAGE_SIZE);
+      if (page == null || page < 1) return Resource.empty();
+      var queryParams = {
+        'country': 'in',
+        'page': '$page',
+        'pageSize': '$PAGE_SIZE'
+      };
+      Uri uri = Uri.parse("$NEWS_URL$NEWS_URL_PATH");
+      uri = uri.replace(queryParameters: queryParams);
+      print("URI: $uri");
+      final response =
+          await http.get(uri, headers: {'Authorization': NEWS_API_KEY});
+      // print("Request: ${response.request}");
+      // print("Headers: ${response.headers}");
+      print("Response: ${response.body}");
+      if (response.statusCode == 200 && response.body != null) {
+        final newsJsonList = jsonDecode(response.body)['articles'];
+        // print("newsJsonList => $newsJsonList");
+        final List<NewsArticle> articles = List.from(newsJsonList)
+            .map((e) => NewsArticle.fromJson(e))
+            .toList();
+        print("articles => $articles");
+        if (articles.isEmpty) {
+          return Resource.empty();
+        } else {
+          if (refresh) {
+            NewsData.getInstance().newsList = articles;
+          } else {
+            NewsData.getInstance().addNewsArticles(articles);
+          }
+          return Resource.success(NewsData.getInstance().newsList);
+        }
+      } else {
+        return Resource.failure(response.body);
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    return Resource.failure("Unknown error");
+  }
 }

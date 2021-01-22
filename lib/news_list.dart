@@ -4,14 +4,19 @@ import 'package:news_app/news_detail.dart';
 import 'package:news_app/utils/app_theme_utils.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
+import 'utils/app_utils.dart';
+
 class NewsListPage extends StatefulWidget {
   @override
   _NewsListPageState createState() => _NewsListPageState();
 }
 
 class _NewsListPageState extends State<NewsListPage> {
+  bool _shouldLoadMore = true;
   bool _loading = true;
+  bool _loadingMore = false;
   List<NewsArticle> _newsList = <NewsArticle>[];
+  int _listCount = 0;
   String _error = "";
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
@@ -35,16 +40,31 @@ class _NewsListPageState extends State<NewsListPage> {
       final listView = ListView.builder(
         addAutomaticKeepAlives: false,
         itemBuilder: (ctx, index) {
+          if (index > _listCount - 1) return null;
+          if (_shouldLoadMore && index == _newsList.length - 4) {
+            // Trigger load more when there are only 3 more items to the bottom.
+            _loadMore();
+          }
+          _updateListCount();
+          if (_loadingMore && index == _listCount - 1) {
+            return Container(
+              padding: EdgeInsets.all(8),
+              alignment: Alignment.center,
+              child: CircularProgressIndicator(),
+            );
+          }
           final newsItem = _newsList[index];
           return GestureDetector(
-            child: NewsListItem(newsItem, _onTapFavorite,
-                NewsData.getInstance().isFavorite(newsItem)),
+            child: NewsListItem(
+                newsItem,
+                _onTapFavorite,
+                NewsData.getInstance().isFavorite(newsItem),
+                index == _newsList.length - 1),
             onTap: () {
               _onTapNewsItem(newsItem);
             },
           );
         },
-        itemCount: _newsList.length,
       );
 
       stackChildren.add(SmartRefresher(
@@ -90,11 +110,12 @@ class _NewsListPageState extends State<NewsListPage> {
   }
 
   void _loadNews() async {
-    final result = await fetchNews(false);
+    final result = await NewsRepo.fetchNews();
     print("loadNews => ${result.status}");
     if (result.isSuccess()) {
       setState(() {
         _newsList = result.data;
+        _updateListCount();
         _loading = false;
       });
     } else if (result.isFailure()) {
@@ -106,14 +127,44 @@ class _NewsListPageState extends State<NewsListPage> {
   }
 
   void _refreshNews() async {
-    final result = await fetchNews(true);
+    final result = await NewsRepo.fetchNews(refresh: true);
     print("refreshNews => ${result.status}");
     if (result.isSuccess()) {
       setState(() {
         _newsList = result.data;
+        _updateListCount();
+        _shouldLoadMore = true;
       });
-      _refreshController.refreshCompleted();
     }
+    _refreshController.refreshCompleted();
+  }
+
+  void _loadMore() async {
+    if (_loadingMore) return;
+    print("Load more triggered");
+    _loadingMore = true;
+    final result = await NewsRepo.fetchNews(paginate: true);
+    if (result.isSuccess()) {
+      setState(() {
+        _newsList = result.data;
+        _updateListCount();
+        _shouldLoadMore = true;
+        _loadingMore = false;
+      });
+    } else if (result.isFailure()) {
+      setState(() {
+        _loadingMore = false;
+      });
+    } else if (result.isEmpty()) {
+      setState(() {
+        _loadingMore = false;
+        _shouldLoadMore = false;
+      });
+    }
+  }
+
+  void _updateListCount() {
+    _listCount = _loadingMore ? _newsList.length + 1 : _newsList.length;
   }
 }
 
@@ -122,8 +173,10 @@ class NewsListItem extends StatelessWidget {
 
   final OnTapFavorite _onTapFavorite;
   final bool _isFavorite;
+  final bool _needBottomMargin;
 
-  NewsListItem(this.newsItem, this._onTapFavorite, this._isFavorite);
+  NewsListItem(this.newsItem, this._onTapFavorite, this._isFavorite,
+      this._needBottomMargin);
 
   void _addImage(List<Widget> childWidgets) {
     if (newsItem.urlToImage != null && newsItem.urlToImage.isNotEmpty) {
@@ -160,18 +213,22 @@ class NewsListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> childWidgets = [
-      Text(
-        newsItem.title,
-        maxLines: 2,
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
-        ),
-        overflow: TextOverflow.ellipsis,
-      )
-    ];
+    final List<Widget> childWidgets = [];
+    childWidgets.add(Text(
+      newsItem.title,
+      maxLines: 2,
+      style: TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.w700,
+      ),
+      overflow: TextOverflow.ellipsis,
+    ));
     _addImage(childWidgets);
+    childWidgets.add(Container(
+      margin: EdgeInsets.only(top: 8),
+      alignment: Alignment.centerLeft,
+      child: Text(getFormattedDate(newsItem.publishedAt) ?? ""),
+    ));
     _addDesc(childWidgets);
     childWidgets.add(Row(
       mainAxisAlignment: MainAxisAlignment.end,
@@ -200,7 +257,7 @@ class NewsListItem extends StatelessWidget {
       elevation: 2,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(8))),
-      margin: EdgeInsets.fromLTRB(8, 4, 8, 4),
+      margin: EdgeInsets.fromLTRB(8, 8, 8, _needBottomMargin ? 8 : 0),
       child: Padding(
         padding: EdgeInsets.fromLTRB(16, 16, 16, 4),
         child: Column(
