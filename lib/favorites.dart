@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:news_app/news_detail.dart';
 
 import 'models/news_models.dart';
 import 'utils/app_theme_utils.dart';
@@ -117,18 +118,29 @@ class FavoriteListItem extends StatelessWidget {
         children: columnChildren,
       ),
     ));
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(8))),
-      margin: EdgeInsets.fromLTRB(8, 4, 8, 4),
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(8, 8, 8, 0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: rowChildren,
+    return GestureDetector(
+      onTap: () {
+        _onTapNewsItem(context);
+      },
+      child: Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8))),
+        margin: EdgeInsets.fromLTRB(8, 4, 8, 4),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(8, 8, 8, 0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: rowChildren,
+          ),
         ),
       ),
     );
+  }
+
+  void _onTapNewsItem(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
+      return NewsDetailPage(favoriteItem);
+    }));
   }
 }
