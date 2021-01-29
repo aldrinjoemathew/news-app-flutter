@@ -8,10 +8,13 @@ ThemeData buildAppTheme() {
           actionsIconTheme: IconThemeData(color: AppColors.white)),
       colorScheme: _shrineColorScheme,
       toggleableActiveColor: AppColors.lightSteelBlue,
-      accentColor: AppColors.lightSteelBlue,
+      accentColor: AppColors.darkKhaki,
       primaryColor: AppColors.darkOlive,
       buttonColor: AppColors.darkOlive,
       scaffoldBackgroundColor: AppColors.white,
+      // bottomSheetTheme: BottomSheetThemeData(
+      //   backgroundColor: Colors.black.withOpacity(0),
+      // ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: AppColors.darkOlive,
         selectedItemColor: Colors.white,
@@ -36,7 +39,7 @@ IconThemeData _customIconTheme(IconThemeData original) {
 const ColorScheme _shrineColorScheme = ColorScheme(
   primary: AppColors.darkOlive,
   primaryVariant: AppColors.sienna,
-  secondary: AppColors.lightSteelBlue,
+  secondary: AppColors.darkKhaki,
   secondaryVariant: AppColors.beige,
   surface: AppColors.white,
   background: AppColors.white,

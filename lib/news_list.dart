@@ -18,12 +18,15 @@ class _NewsListPageState extends State<NewsListPage> {
   List<NewsArticle> _newsList = <NewsArticle>[];
   int _listCount = 0;
   String _error = "";
+  bool _showFilter = false;
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
+  String _selectedCategory;
 
   @override
   void initState() {
-    _loadNews();
+    _selectedCategory = NewsData.getInstance().category;
+    _loadNews(false);
     super.initState();
   }
 
@@ -86,16 +89,100 @@ class _NewsListPageState extends State<NewsListPage> {
         child: CircularProgressIndicator(),
       ));
     }
-    return Container(
-        child: Stack(
-      children: stackChildren,
-    ));
+    final filterFab = FloatingActionButton(
+      onPressed: () {
+        _onTapFilter(context);
+      },
+      child: Icon(Icons.filter_alt),
+    );
+    return Scaffold(
+      floatingActionButton: Padding(
+        child: filterFab,
+        padding: EdgeInsets.only(bottom: 16),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      // bottomSheet: _showFilter ? getCategoryBottomSheet() : null,
+      body: Container(
+          child: Stack(
+        children: stackChildren,
+      )),
+    );
+  }
+
+  void _onTapFilter(BuildContext context) {
+    showModalBottomSheet(
+        context: context,
+        barrierColor: AppColors.darkKhaki.withOpacity(0.3),
+        isDismissible: true,
+        builder: (ctx) {
+          return getCategoryBottomSheet();
+        });
+    // setState(() {
+    //   _showFilter = !_showFilter;
+    // });
   }
 
   void _onTapFavorite(NewsArticle newsItem) {
     setState(() {
       NewsData.getInstance().updateFavorites(newsItem);
     });
+  }
+
+  bool isSelected(String c) {
+    return this._selectedCategory == c;
+  }
+
+  Widget getCategoryBottomSheet() {
+    Iterable<Widget> listViewChildren = NewsRepo.categories.map((e) {
+      return GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        child: Container(
+          color: isSelected(e) ? AppColors.darkKhaki.withOpacity(0.5) : null,
+          padding: EdgeInsets.all(12),
+          alignment: Alignment.centerRight,
+          child: Text(
+            e,
+            style: TextStyle(
+                fontWeight: isSelected(e) ? FontWeight.bold : FontWeight.normal,
+                color: AppColors.white,
+                fontSize: isSelected(e) ? 20 : 16),
+          ),
+        ),
+        onTap: () {
+          _onTapCategory(e);
+        },
+      );
+    });
+    listViewChildren =
+        ListTile.divideTiles(tiles: listViewChildren, color: AppColors.white);
+    return BottomSheet(
+        backgroundColor: AppColors.sienna,
+        onClosing: () {},
+        builder: (ctx) {
+          return Container(
+            height: 250,
+            color: Colors.white.withOpacity(0),
+            padding: EdgeInsets.fromLTRB(0, 32, 0, 16),
+            child: ListView(
+              children: listViewChildren.toList(),
+            ),
+          );
+        });
+  }
+
+  void _onTapCategory(String category) {
+    if (category == _selectedCategory) {
+      _selectedCategory = null;
+    } else {
+      _selectedCategory = category;
+    }
+    NewsRepo.updateCategory(_selectedCategory);
+    setState(() {
+      // _showFilter = !_showFilter;
+      _loading = true;
+    });
+    _loadNews(true);
+    Navigator.of(context).pop();
   }
 
   void _onTapNewsItem(NewsArticle newsItem) {
@@ -109,8 +196,9 @@ class _NewsListPageState extends State<NewsListPage> {
     if (this.mounted) super.setState(fn);
   }
 
-  void _loadNews() async {
-    final result = await NewsRepo.fetchNews();
+  void _loadNews(bool refresh) async {
+    final result =
+        await NewsRepo.fetchNews(refresh: refresh, category: _selectedCategory);
     print("loadNews => ${result.status}");
     if (result.isSuccess()) {
       setState(() {
@@ -127,7 +215,8 @@ class _NewsListPageState extends State<NewsListPage> {
   }
 
   void _refreshNews() async {
-    final result = await NewsRepo.fetchNews(refresh: true);
+    final result =
+        await NewsRepo.fetchNews(refresh: true, category: _selectedCategory);
     print("refreshNews => ${result.status}");
     if (result.isSuccess()) {
       setState(() {
@@ -143,7 +232,9 @@ class _NewsListPageState extends State<NewsListPage> {
     if (_loadingMore) return;
     print("Load more triggered");
     _loadingMore = true;
-    final result = await NewsRepo.fetchNews(paginate: true);
+    final result =
+        await NewsRepo.fetchNews(paginate: true, category: _selectedCategory);
+    print("loadMore => ${result.status}");
     if (result.isSuccess()) {
       setState(() {
         _newsList = result.data;
@@ -270,3 +361,15 @@ class NewsListItem extends StatelessWidget {
 }
 
 typedef void OnTapFavorite(NewsArticle newsArticle);
+
+/*
+final fab = _selectedIndex == 0
+        ? FloatingActionButton(
+            onPressed: _onTapFilter,
+            child: Icon(Icons.filter_alt),
+          )
+        : null;
+
+
+
+ */

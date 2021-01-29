@@ -38,7 +38,7 @@ Text getCommonText(String text) {
   );
 }
 
-void showBottomSheet(String text, ScaffoldState scaffoldState) {
+void showAppBottomSheet(String text, ScaffoldState scaffoldState) {
   scaffoldState.showSnackBar(SnackBar(
     padding: EdgeInsets.all(8),
     backgroundColor: Colors.black,

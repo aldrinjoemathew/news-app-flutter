@@ -1,17 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:news_app/models/resource.dart';
 import 'package:news_app/utils/app_utils.dart';
-// To parse this JSON data, do
-//
-//     final welcome = welcomeFromJson(jsonString);
-
-NewsResponse welcomeFromJson(String str) =>
-    NewsResponse.fromJson(json.decode(str));
-
-String welcomeToJson(NewsResponse data) => json.encode(data.toJson());
 
 class NewsResponse {
   NewsResponse({
@@ -113,6 +106,8 @@ class Source {
 }
 
 class NewsData {
+  String category;
+
   NewsData._privateConstructor();
 
   static NewsData _instance = NewsData._privateConstructor();
@@ -156,6 +151,15 @@ class NewsRepo {
   static const NEWS_URL_PATH = "/v2/top-headlines";
   static const NEWS_API_KEY = "96c1c14cda3d41fd8a1af286982fa02e";
   static const PAGE_SIZE = 10;
+  static List<String> categories = [
+    'business',
+    'entertainment',
+    'general',
+    'health',
+    'science',
+    'sports',
+    'technology'
+  ];
 
   static Future<List<NewsArticle>> getNewsList(BuildContext context) async {
     final newsJsonString =
@@ -171,7 +175,7 @@ class NewsRepo {
   }
 
   static Future<Resource<List<NewsArticle>>> fetchNews(
-      {bool refresh = false, bool paginate = false}) async {
+      {bool refresh = false, bool paginate = false, String category}) async {
     if (!refresh &&
         !paginate &&
         NewsData.getInstance().newsList?.isNotEmpty == true) {
@@ -189,21 +193,25 @@ class NewsRepo {
         'page': '$page',
         'pageSize': '$PAGE_SIZE'
       };
+      if (category?.isNotEmpty == true) {
+        queryParams['category'] = category;
+      }
       Uri uri = Uri.parse("$NEWS_URL$NEWS_URL_PATH");
       uri = uri.replace(queryParameters: queryParams);
       print("URI: $uri");
-      final response =
-          await http.get(uri, headers: {'Authorization': NEWS_API_KEY});
+      final response = await http.get(
+        uri,
+        headers: {HttpHeaders.authorizationHeader: NEWS_API_KEY},
+      );
       // print("Request: ${response.request}");
       // print("Headers: ${response.headers}");
-      print("Response: ${response.body}");
+      // print("Response: ${response.body}");
       if (response.statusCode == 200 && response.body != null) {
         final newsJsonList = jsonDecode(response.body)['articles'];
         // print("newsJsonList => $newsJsonList");
         final List<NewsArticle> articles = List.from(newsJsonList)
             .map((e) => NewsArticle.fromJson(e))
             .toList();
-        print("articles => $articles");
         if (articles.isEmpty) {
           return Resource.empty();
         } else {
@@ -221,5 +229,9 @@ class NewsRepo {
       print(e.toString());
     }
     return Resource.failure("Unknown error");
+  }
+
+  static void updateCategory(String selectedCategory) {
+    NewsData.getInstance().category = selectedCategory;
   }
 }
