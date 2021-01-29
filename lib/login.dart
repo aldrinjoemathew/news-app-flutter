@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:news_app/models/users.dart';
+import 'package:news_app/utils/app_theme_utils.dart';
 
 import 'home.dart';
 import 'utils/app_utils.dart';
@@ -157,20 +158,18 @@ class _LoginPageState extends State<LoginPage> {
     print("Reset password page");
   }
 
+  void _onPressLoginBtn() {
+    if (_loginFormKey.currentState.validate()) {
+      _loginUser(_emailTextEditingController.text,
+          _passwordTextEditingController.text);
+    }
+  }
+
   Widget _getLoginBtn() {
     final List<Widget> stackChildren = [
       SizedBox(
         width: double.infinity,
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(padding: EdgeInsets.all(12)),
-          child: getCommonText("Login"),
-          onPressed: () {
-            if (_loginFormKey.currentState.validate()) {
-              _loginUser(_emailTextEditingController.text,
-                  _passwordTextEditingController.text);
-            }
-          },
-        ),
+        child: getAppFlatBtn("Login", _onPressLoginBtn),
       )
     ];
     if (_loading) {

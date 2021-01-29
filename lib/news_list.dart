@@ -139,7 +139,7 @@ class _NewsListPageState extends State<NewsListPage> {
         child: Container(
           color: isSelected(e) ? AppColors.darkKhaki.withOpacity(0.5) : null,
           padding: EdgeInsets.all(12),
-          alignment: Alignment.centerRight,
+          alignment: Alignment.center,
           child: Text(
             e,
             style: TextStyle(
@@ -156,6 +156,9 @@ class _NewsListPageState extends State<NewsListPage> {
     listViewChildren =
         ListTile.divideTiles(tiles: listViewChildren, color: AppColors.white);
     return BottomSheet(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(32), topRight: Radius.circular(32))),
         backgroundColor: AppColors.sienna,
         onClosing: () {},
         builder: (ctx) {
@@ -264,10 +267,10 @@ class NewsListItem extends StatelessWidget {
 
   final OnTapFavorite _onTapFavorite;
   final bool _isFavorite;
-  final bool _needBottomMargin;
+  final bool _isLastItem;
 
-  NewsListItem(this.newsItem, this._onTapFavorite, this._isFavorite,
-      this._needBottomMargin);
+  NewsListItem(
+      this.newsItem, this._onTapFavorite, this._isFavorite, this._isLastItem);
 
   void _addImage(List<Widget> childWidgets) {
     if (newsItem.urlToImage != null && newsItem.urlToImage.isNotEmpty) {
@@ -281,6 +284,14 @@ class NewsListItem extends StatelessWidget {
           width: double.infinity,
           height: 200,
           fit: BoxFit.cover,
+          errorBuilder: (ctx, error, stackTrace) {
+            return Image.asset(
+              "assets/ic_news_dummy.png",
+              width: double.infinity,
+              height: 100,
+              fit: BoxFit.scaleDown,
+            );
+          },
         ),
       ));
     }
@@ -344,32 +355,28 @@ class NewsListItem extends StatelessWidget {
         )
       ],
     ));
-    return Card(
+    if (!_isLastItem) {
+      childWidgets.add(Divider(color: AppColors.darkKhaki));
+    } else {
+      childWidgets.add(SizedBox(height: 60));
+    }
+    final content = Container(
+      color: AppColors.beige,
+      padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: childWidgets,
+      ),
+    );
+    final card = Card(
       elevation: 2,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(8))),
-      margin: EdgeInsets.fromLTRB(8, 8, 8, _needBottomMargin ? 8 : 0),
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(16, 16, 16, 4),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: childWidgets,
-        ),
-      ),
+      margin: EdgeInsets.fromLTRB(8, 8, 8, _isLastItem ? 8 : 0),
+      child: content,
     );
+    return content;
   }
 }
 
 typedef void OnTapFavorite(NewsArticle newsArticle);
-
-/*
-final fab = _selectedIndex == 0
-        ? FloatingActionButton(
-            onPressed: _onTapFilter,
-            child: Icon(Icons.filter_alt),
-          )
-        : null;
-
-
-
- */

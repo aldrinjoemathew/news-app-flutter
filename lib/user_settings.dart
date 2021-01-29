@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:news_app/models/users.dart';
-import 'package:news_app/utils/app_utils.dart';
+import 'package:news_app/utils/app_theme_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'login.dart';
@@ -23,40 +23,42 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.center,
+    final profileImage = Image.asset(
+      "assets/ic_profile_dummy.png",
+      width: 150,
+      height: 150,
+      fit: BoxFit.fill,
+    );
+    final imageParent = ClipRRect(
+      borderRadius: BorderRadius.all(Radius.circular(32)),
+      child: profileImage,
+    );
+    final textContainer = Container(
+        child: Column(children: [
+      Text(_user?.name ?? "",
+          style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
+      Text(_user?.email ?? "", style: TextStyle(fontSize: 20))
+    ]));
+    return ListView(
       padding: EdgeInsets.all(16),
-      margin: EdgeInsets.only(top: 50),
-      child: Column(
-        children: [
-          CircleAvatar(
-            radius: 50,
-            child: Icon(
-              Icons.person,
-              size: 75,
-              color: Colors.white,
+      children: [
+        Column(
+          children: [
+            SizedBox(
+              height: 50,
             ),
-            backgroundColor: getAppThemeColor(),
-          ),
-          SizedBox(
-            height: 16,
-          ),
-          Text(
-            _user?.name ?? "",
-            style: TextStyle(fontSize: 20),
-          ),
-          Text(
-            _user?.email ?? "",
-            style: TextStyle(fontSize: 20),
-          ),
-          SizedBox(
-            height: 16,
-          ),
-          ElevatedButton(
-              onPressed: _logout,
-              child: Text("Log out"))
-        ],
-      ),
+            imageParent,
+            SizedBox(
+              height: 16,
+            ),
+            textContainer,
+            SizedBox(
+              height: 16,
+            ),
+            getAppFlatBtn("Log out", _logout)
+          ],
+        )
+      ],
     );
   }
 

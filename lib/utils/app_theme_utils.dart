@@ -12,9 +12,9 @@ ThemeData buildAppTheme() {
       primaryColor: AppColors.darkOlive,
       buttonColor: AppColors.darkOlive,
       scaffoldBackgroundColor: AppColors.white,
-      // bottomSheetTheme: BottomSheetThemeData(
-      //   backgroundColor: Colors.black.withOpacity(0),
-      // ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: Colors.black.withOpacity(0),
+      ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: AppColors.darkOlive,
         selectedItemColor: Colors.white,
@@ -64,4 +64,21 @@ class AppColors {
   static const surfaceBg = beige;
   static const errorRed = Colors.redAccent;
   static const favoriteRed = Colors.red;
+}
+
+MaterialButton getAppFlatBtn(String btnText, VoidCallback onPressed,
+    {Color btnColor = AppColors.sienna,
+    double borderRadius = 16,
+    double padding = 16,
+    double textSize = 16}) {
+  return FlatButton(
+      padding: EdgeInsets.all(padding),
+      color: btnColor,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(borderRadius))),
+      onPressed: onPressed,
+      child: Text(
+        btnText,
+        style: TextStyle(color: AppColors.white, fontSize: textSize),
+      ));
 }
