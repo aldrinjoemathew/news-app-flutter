@@ -15,8 +15,8 @@ void showOkAlert(BuildContext context, String title, String msg,
   final actions = [
     FlatButton(
         onPressed: () {
-          okAction?.call();
           Navigator.of(context).pop(null);
+          okAction?.call();
         },
         child: getCommonText(okText))
   ];

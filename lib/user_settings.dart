@@ -75,7 +75,9 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
 
   void _getUserDetails() async {
     prefs = await SharedPreferences.getInstance();
-    final user = userFromJson(prefs.getString("user"));
+    String userJson = prefs.getString("user");
+    if (userJson?.isEmpty != false) return;
+    final user = userFromJson(userJson);
     setState(() {
       _user = user;
     });
