@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:news_app/favorites.dart';
 import 'package:news_app/user_settings.dart';
 
+import 'edit_profile.dart';
 import 'news_list.dart';
 
 class HomePage extends StatefulWidget {
@@ -25,9 +26,16 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> appBarActions;
+    if (_selectedIndex == 2) {
+      appBarActions = [
+        IconButton(icon: Icon(Icons.mode_edit), onPressed: _openEditProfile)
+      ];
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(widget._titles[_selectedIndex]),
+        actions: appBarActions,
       ),
       body: widget._pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -39,7 +47,7 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
               icon: ImageIcon(AssetImage("assets/ic_news_list.png")),
               activeIcon:
-                  ImageIcon(AssetImage("assets/ic_news_list_active.png")),
+              ImageIcon(AssetImage("assets/ic_news_list_active.png")),
               label: "News"),
           BottomNavigationBarItem(
               activeIcon: Icon(Icons.favorite),
@@ -58,5 +66,11 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  void _openEditProfile() {
+    Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
+      return EditProfilePage();
+    }));
   }
 }

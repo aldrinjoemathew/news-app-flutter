@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:news_app/models/users.dart';
 import 'package:news_app/utils/app_theme_utils.dart';
+import 'package:news_app/utils/app_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'login.dart';
@@ -63,18 +64,20 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
   }
 
   void _logout() {
-    prefs.remove("email");
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (ctx) {
-      return LoginPage();
-    }));
+    showOkAlert(context, "Log out", "Are you sure you want to log out?",
+        okText: "Log out", showCancel: true, okAction: () {
+      prefs.remove("user");
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (ctx) {
+        return LoginPage();
+      }));
+    });
   }
 
   void _getUserDetails() async {
     prefs = await SharedPreferences.getInstance();
-    final email = prefs.getString("email");
+    final user = userFromJson(prefs.getString("user"));
     setState(() {
-      _user = getUsers()
-          .firstWhere((element) => element.email == email, orElse: () => null);
+      _user = user;
     });
   }
 }

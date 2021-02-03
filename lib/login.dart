@@ -4,6 +4,7 @@ import 'package:news_app/utils/app_theme_utils.dart';
 
 import 'home.dart';
 import 'utils/app_utils.dart';
+import 'utils/validation_utils.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -45,10 +46,7 @@ class _LoginPageState extends State<LoginPage> {
                   labelText: "Email",
                   hintText: "Enter email",
                 ),
-                validator: (emailValue) {
-                  if (emailValue.isEmpty) return "Enter a valid email";
-                  return null;
-                },
+                validator: validateEmail,
               ),
               Padding(padding: EdgeInsets.fromLTRB(0, 8, 0, 0)),
               TextFormField(
@@ -67,7 +65,7 @@ class _LoginPageState extends State<LoginPage> {
                         onPressed: _showPassword),
                     labelText: "Password",
                     hintText: "Enter password"),
-                validator: _validatePassword,
+                validator: validatePassword,
               ),
               Padding(padding: EdgeInsets.fromLTRB(0, 32, 0, 0)),
               _getLoginBtn(),
@@ -128,7 +126,7 @@ class _LoginPageState extends State<LoginPage> {
       setLoading(false);
       return;
     }
-    setLoggedIn(email);
+    saveLoggedInUser(user);
     await Future.delayed(Duration(seconds: 3));
     setLoading(false);
     _pushHomePage();
@@ -138,15 +136,6 @@ class _LoginPageState extends State<LoginPage> {
     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (ctx) {
       return HomePage();
     }));
-  }
-
-  String _validatePassword(passwordValue) {
-    if (passwordValue.isEmpty) {
-      return "Enter a password";
-    } else if (passwordValue.length < 5) {
-      return "Password should be at least 5 characters long";
-    }
-    return null;
   }
 
   Widget _getLoginLogo() {
@@ -169,7 +158,7 @@ class _LoginPageState extends State<LoginPage> {
     final List<Widget> stackChildren = [
       SizedBox(
         width: double.infinity,
-        child: getAppFlatBtn("Login", _onPressLoginBtn),
+        child: getAppFlatBtn("Log in", _onPressLoginBtn),
       )
     ];
     if (_loading) {

@@ -64,6 +64,8 @@ class AppColors {
   static const surfaceBg = beige;
   static const errorRed = Colors.redAccent;
   static const favoriteRed = Colors.red;
+  static const green = Colors.lightGreen;
+  static const red = Colors.red;
 }
 
 MaterialButton getAppFlatBtn(String btnText, VoidCallback onPressed,
@@ -76,7 +78,9 @@ MaterialButton getAppFlatBtn(String btnText, VoidCallback onPressed,
       color: btnColor,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(borderRadius))),
-      onPressed: onPressed,
+      onPressed: () {
+        onPressed?.call();
+      },
       child: Text(
         btnText,
         style: TextStyle(color: AppColors.white, fontSize: textSize),
