@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:news_app/models/users.dart';
 import 'package:news_app/utils/app_theme_utils.dart';
 import 'package:news_app/utils/app_utils.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'login.dart';
@@ -34,12 +35,19 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
       borderRadius: BorderRadius.all(Radius.circular(32)),
       child: profileImage,
     );
-    final textContainer = Container(
-        child: Column(children: [
-      Text(_user?.name ?? "",
-          style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
-      Text(_user?.email ?? "", style: TextStyle(fontSize: 20))
-    ]));
+    final textContainer = Consumer<UserModel>(
+      builder: (ctx, value, child) {
+        if (value.user != null) {
+          _user = value.user;
+        }
+        return Container(
+            child: Column(children: [
+          Text(_user?.name ?? "",
+              style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
+          Text(_user?.email ?? "", style: TextStyle(fontSize: 20))
+        ]));
+      },
+    );
     return ListView(
       padding: EdgeInsets.all(16),
       children: [

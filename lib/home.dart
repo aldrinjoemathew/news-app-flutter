@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
         IconButton(icon: Icon(Icons.mode_edit), onPressed: _openEditProfile)
       ];
     }
-    return Scaffold(
+    final scaffold = Scaffold(
       appBar: AppBar(
         title: Text(widget._titles[_selectedIndex]),
         actions: appBarActions,
@@ -60,6 +60,7 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
+    return scaffold;
   }
 
   void _onTabSelected(int index) {

@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
+
 User userFromJson(String str) => User.fromJson(json.decode(str));
 
 String userToJson(User data) => json.encode(data.toJson());
@@ -43,4 +45,14 @@ List<User> getUsers() {
   userList.add(User.create("Alice", "alice@mail.com", "alice123"));
   userList.add(User.create("Bob", "bob@mail.com", "bob123"));
   return userList;
+}
+
+class UserModel extends ChangeNotifier {
+  User user;
+
+  void updateUserDetails(User user) {
+    this.user = user;
+    notifyListeners();
+    print("notified: ${this.user?.name}");
+  }
 }

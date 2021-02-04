@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:news_app/utils/app_theme_utils.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'models/users.dart';
@@ -145,7 +146,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       });
       _user.name = _nameEditingController.text;
       _user.email = _emailEditingController.text;
-      await _updateUserDetailsInPref(_user);
+      await _updateUserDetailsInPref(context.read<UserModel>(), _user);
       setState(() {
         _saving = false;
       });
@@ -165,9 +166,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
     });
   }
 
-  Future<bool> _updateUserDetailsInPref(User user) async {
+  Future<bool> _updateUserDetailsInPref(UserModel userModel, User user) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return await prefs.setString("user", userToJson(user));
+    final saved = await prefs.setString("user", userToJson(user));
+    if (saved) {
+      userModel.updateUserDetails(user);
+      print("saved");
+    }
+    return saved;
   }
 
   void _popRoute() {
