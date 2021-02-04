@@ -13,6 +13,7 @@ class User {
     this.password,
     this.address,
     this.phone,
+    this.profileImagePath,
   });
 
   User.create(this.name, this.email, this.password);
@@ -22,6 +23,7 @@ class User {
   String password;
   String address;
   String phone;
+  String profileImagePath;
 
   factory User.fromJson(Map<String, dynamic> json) => User(
         name: json["name"],
@@ -29,14 +31,17 @@ class User {
         password: json["password"],
         address: json["address"],
         phone: json["phone"],
+        profileImagePath: json["profileImagePath"],
       );
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         "name": name,
         "email": email,
         "password": password,
         "address": address,
         "phone": phone,
+        "profileImagePath": profileImagePath,
       };
 }
 

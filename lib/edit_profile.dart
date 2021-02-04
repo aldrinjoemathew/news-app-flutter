@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:news_app/utils/app_theme_utils.dart';
+import 'package:news_app/utils/app_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,10 +21,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final _formKey = GlobalKey<FormState>();
   User _user;
   bool _saving = false;
+  ImagePicker _imagePicker;
+
+  File _profileImageFile;
 
   @override
   void initState() {
     _getUserDetails();
+    _imagePicker = ImagePicker();
     super.initState();
   }
 
@@ -31,12 +39,19 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final profileImage = Image.asset(
-      "assets/ic_profile_dummy.png",
-      width: 150,
-      height: 150,
-      fit: BoxFit.fill,
-    );
+    final profileImage = _profileImageFile != null
+        ? Image.file(
+            _profileImageFile,
+            width: 150,
+            height: 150,
+            fit: BoxFit.fill,
+          )
+        : Image.asset(
+            "assets/ic_profile_dummy.png",
+            width: 150,
+            height: 150,
+            fit: BoxFit.fill,
+          );
     final imageStack = Stack(
       alignment: Alignment.bottomCenter,
       children: [
@@ -53,7 +68,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
               style:
                   TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             ),
-            onPressed: () {},
+            onPressed: () {
+              _pickImage();
+            },
           ),
         )
       ],
@@ -146,7 +163,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
       });
       _user.name = _nameEditingController.text;
       _user.email = _emailEditingController.text;
-      await _updateUserDetailsInPref(context.read<UserModel>(), _user);
+      bool saved = await _updateUserDetailsInPref(_user);
+      if (saved) {
+        context.read<UserModel>().updateUserDetails(_user);
+      }
       setState(() {
         _saving = false;
       });
@@ -163,14 +183,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
     final user = userFromJson(prefs.getString("user"));
     setState(() {
       _user = user;
+      if (user?.profileImagePath?.isNotEmpty == true) {
+        _profileImageFile = File(user.profileImagePath);
+      }
     });
   }
 
-  Future<bool> _updateUserDetailsInPref(UserModel userModel, User user) async {
+  Future<bool> _updateUserDetailsInPref(User user) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final saved = await prefs.setString("user", userToJson(user));
     if (saved) {
-      userModel.updateUserDetails(user);
       print("saved");
     }
     return saved;
@@ -178,5 +200,19 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   void _popRoute() {
     Navigator.of(context).pop();
+  }
+
+  Future _pickImage() async {
+    final imageFile = await _imagePicker.getImage(source: ImageSource.gallery);
+    if (imageFile.path?.isNotEmpty == true) {
+      _user.profileImagePath = imageFile.path;
+      print("ImagePicker: Image path: ${imageFile.path}");
+      setState(() {
+        _profileImageFile = File(_user.profileImagePath);
+      });
+    } else {
+      print("ImagePicker: Error getting image path");
+      showOkAlert(context, "Error", "Unable to select the image");
+    }
   }
 }
