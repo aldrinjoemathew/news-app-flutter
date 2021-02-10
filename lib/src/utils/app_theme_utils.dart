@@ -70,6 +70,7 @@ class AppColors {
 
 MaterialButton getAppFlatBtn(String btnText, VoidCallback onPressed,
     {Color btnColor = AppColors.sienna,
+    Color disabledBtnColor = AppColors.darkKhaki,
     double borderRadius = 16,
     double padding = 16,
     double textSize = 16}) {
@@ -78,9 +79,8 @@ MaterialButton getAppFlatBtn(String btnText, VoidCallback onPressed,
       color: btnColor,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(borderRadius))),
-      onPressed: () {
-        onPressed?.call();
-      },
+      onPressed: onPressed?.call,
+      disabledColor: disabledBtnColor,
       child: Text(
         btnText,
         style: TextStyle(color: AppColors.white, fontSize: textSize),

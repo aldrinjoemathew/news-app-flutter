@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class NewsCategoryModel extends ChangeNotifier {
   String _selectedCategory;

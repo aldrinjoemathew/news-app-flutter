@@ -1,7 +1,7 @@
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:news_app/models/users.dart';
+import 'package:news_app/src/models/users.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app_theme_utils.dart';

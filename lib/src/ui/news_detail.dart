@@ -1,11 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:news_app/utils/app_theme_utils.dart';
-import 'package:news_app/utils/app_utils.dart';
+import 'package:news_app/src/models/news_models.dart';
+import 'package:news_app/src/utils/app_theme_utils.dart';
+import 'package:news_app/src/utils/app_utils.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-
-import 'models/news_models.dart';
 
 class NewsDetailPage extends StatelessWidget {
   final NewsArticle newsItem;

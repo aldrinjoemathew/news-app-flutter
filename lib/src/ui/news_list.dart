@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:news_app/models/news_models.dart';
-import 'package:news_app/news_detail.dart';
-import 'package:news_app/utils/app_theme_utils.dart';
+import 'package:news_app/src/models/news_models.dart';
+import 'package:news_app/src/repositories/news_repo.dart';
+import 'package:news_app/src/ui/news_detail.dart';
+import 'package:news_app/src/utils/app_theme_utils.dart';
+import 'package:news_app/src/utils/app_utils.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-
-import 'utils/app_utils.dart';
 
 class NewsListPage extends StatefulWidget {
   @override

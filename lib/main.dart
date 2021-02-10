@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:news_app/src/models/user_model.dart';
+import 'package:news_app/src/utils/app_theme_utils.dart';
+import 'package:news_app/src/utils/app_utils.dart';
+import 'package:news_app/src/validation/edit_profile_validation.dart';
+import 'package:news_app/src/validation/login_validation.dart';
 import 'package:provider/provider.dart';
 
-import 'home.dart';
-import 'login.dart';
-import 'models/users.dart';
-import 'utils/app_theme_utils.dart';
-import 'utils/app_utils.dart';
+import 'src/ui/home.dart';
+import 'src/ui/login.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,13 +17,15 @@ void main() async {
     home: initialPage,
     theme: buildAppTheme(),
   );
-  final provider = ChangeNotifierProvider(
-    create: (c) {
-      return UserModel();
-    },
+  final changeProviders = MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (c) => UserModel()),
+      ChangeNotifierProvider(create: (c) => LoginValidation()),
+      ChangeNotifierProvider(create: (c) => EditProfileValidation())
+    ],
     child: materialApp,
   );
-  runApp(provider);
+  runApp(changeProviders);
 }
 
 Future<Widget> _getInitialPage() async {

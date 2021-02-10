@@ -1,14 +1,16 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:news_app/utils/app_theme_utils.dart';
-import 'package:news_app/utils/app_utils.dart';
+import 'package:intl/intl.dart';
+import 'package:news_app/src/models/user_model.dart';
+import 'package:news_app/src/models/users.dart';
+import 'package:news_app/src/utils/app_theme_utils.dart';
+import 'package:news_app/src/utils/app_utils.dart';
+import 'package:news_app/src/validation/edit_profile_validation.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'models/users.dart';
-import 'utils/validation_utils.dart';
 
 class EditProfilePage extends StatefulWidget {
   @override
@@ -18,18 +20,20 @@ class EditProfilePage extends StatefulWidget {
 class _EditProfilePageState extends State<EditProfilePage> {
   final _nameEditingController = TextEditingController();
   final _emailEditingController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
+  final _dobEditingController = TextEditingController();
   User _user;
   bool _saving = false;
   ImagePicker _imagePicker;
-
   File _profileImageFile;
+  EditProfileValidation _validationService;
+  FocusNode _dobFocusNode = FocusNode();
 
   @override
   void initState() {
+    super.initState();
     _getUserDetails();
     _imagePicker = ImagePicker();
-    super.initState();
+    _dobFocusNode.addListener(_onDobFocused);
   }
 
   @override
@@ -39,6 +43,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    _validationService = Provider.of<EditProfileValidation>(context);
     final profileImage = _profileImageFile != null
         ? Image.file(
             _profileImageFile,
@@ -50,8 +55,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
             "assets/ic_profile_dummy.png",
             width: 150,
             height: 150,
-            fit: BoxFit.fill,
-          );
+      fit: BoxFit.fill,
+    );
     final imageStack = Stack(
       alignment: Alignment.bottomCenter,
       children: [
@@ -66,7 +71,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             child: Text(
               "Change image",
               style:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             ),
             onPressed: () {
               _pickImage();
@@ -88,25 +93,42 @@ class _EditProfilePageState extends State<EditProfilePage> {
     ];
 
     listChildren.add(SizedBox(height: 8));
-    _nameEditingController.text = _user?.name;
-    _emailEditingController.text = _user?.email;
-    listChildren.add(TextFormField(
+    listChildren.add(TextField(
       controller: _nameEditingController,
       keyboardType: TextInputType.name,
       textCapitalization: TextCapitalization.words,
+      onChanged: _validationService.changeName,
       decoration: InputDecoration(
-          hintText: "Enter your full name", labelText: "Full Name"),
-      validator: validateText,
+          errorText: _validationService.name.error,
+          hintText: "Enter your full name",
+          labelText: "Full Name"),
     ));
     listChildren.add(TextFormField(
       controller: _emailEditingController,
       keyboardType: TextInputType.emailAddress,
+      onChanged: _validationService.changeEmailId,
       decoration: InputDecoration(
-          hintText: "Enter your email ID", labelText: "Email ID"),
-      validator: validateEmail,
+          errorText: _validationService.emailId.error,
+          hintText: "Enter your email ID",
+          labelText: "Email ID"),
     ));
-    final saveBtn = getAppFlatBtn("Save", _saving ? null : _onClickSave,
-        btnColor: AppColors.green);
+    listChildren.add(TextFormField(
+      readOnly: true,
+      controller: _dobEditingController,
+      focusNode: _dobFocusNode,
+      enabled: true,
+      keyboardType: null,
+      decoration: InputDecoration(
+          errorText: _validationService.dob.error,
+          hintText: "yyyy-MM-dd",
+          labelText: "Date of Birth"),
+    ));
+    final saveBtn = getAppFlatBtn(
+      "Save",
+      _saving || !_validationService.isValid() ? null : _onClickSave,
+      disabledBtnColor: AppColors.green.withOpacity(0.5),
+      btnColor: AppColors.green,
+    );
     final saveBtnWithLoader = Stack(
       alignment: AlignmentDirectional.center,
       children: [
@@ -135,43 +157,43 @@ class _EditProfilePageState extends State<EditProfilePage> {
     final body = Container(
       padding: EdgeInsets.all(16),
       alignment: Alignment.center,
-      child: Form(
-          key: _formKey,
-          child: ListView(
-            children: listChildren,
-          )),
+      child: ListView(
+        children: listChildren,
+      ),
     );
     return Scaffold(
       appBar: AppBar(
         title: Text("Edit Profile"),
       ),
       body: body,
+      backgroundColor: AppColors.beige,
     );
   }
 
   @override
   void dispose() {
+    super.dispose();
     _nameEditingController.dispose();
     _emailEditingController.dispose();
-    super.dispose();
   }
 
   void _onClickSave() async {
-    if (_formKey.currentState.validate()) {
-      setState(() {
-        _saving = true;
-      });
-      _user.name = _nameEditingController.text;
-      _user.email = _emailEditingController.text;
-      bool saved = await _updateUserDetailsInPref(_user);
-      if (saved) {
-        context.read<UserModel>().updateUserDetails(_user);
-      }
-      setState(() {
-        _saving = false;
-      });
-      _popRoute();
+    setState(() {
+      _saving = true;
+    });
+    _validationService.submitForm();
+    _user.name = _validationService.name.value;
+    _user.email = _validationService.emailId.value;
+    _user.dob = _validationService.dob.value;
+    bool saved = await _updateUserDetailsInPref(_user);
+    if (saved) {
+      context.read<UserModel>().updateUserDetails(_user);
     }
+    await Future.delayed(Duration(seconds: 5));
+    setState(() {
+      _saving = false;
+    });
+    _popRoute();
   }
 
   void _onClickCancel() {
@@ -183,6 +205,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
     final user = userFromJson(prefs.getString("user"));
     setState(() {
       _user = user;
+      _nameEditingController.text = _user?.name;
+      _emailEditingController.text = _user?.email;
+      _dobEditingController.text = _user?.dob;
+      _validationService.setInitialValues(
+          name: _user.name, email: _user.email, dob: _user.dob);
       if (user?.profileImagePath?.isNotEmpty == true) {
         _profileImageFile = File(user.profileImagePath);
       }
@@ -213,6 +240,29 @@ class _EditProfilePageState extends State<EditProfilePage> {
     } else {
       print("ImagePicker: Error getting image path");
       showOkAlert(context, "Error", "Unable to select the image");
+    }
+  }
+
+  void _openDatePicker() async {
+    final selectedDate = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(1990),
+        lastDate: DateTime.now());
+    final dateString = DateFormat("yyyy/MM/dd").format(selectedDate);
+    print("Selected date: $dateString");
+    _validationService.changeDob(dateString);
+    if (dateString?.isNotEmpty == true) {
+      setState(() {
+        _dobEditingController.text = dateString;
+      });
+    }
+  }
+
+  void _onDobFocused() {
+    if (_dobFocusNode.hasFocus) {
+      _openDatePicker();
+      _dobFocusNode.unfocus();
     }
   }
 }
