@@ -5,10 +5,9 @@ import 'package:news_app/src/models/user_model.dart';
 import 'package:news_app/src/models/users.dart';
 import 'package:news_app/src/utils/app_theme_utils.dart';
 import 'package:news_app/src/utils/app_utils.dart';
+import 'package:news_app/src/utils/constants.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'login.dart';
 
 class UserSettingsPage extends StatefulWidget {
   @override
@@ -86,10 +85,8 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
   void _logout() {
     showOkAlert(context, "Log out", "Are you sure you want to log out?",
         okText: "Log out", showCancel: true, okAction: () {
-      prefs.remove("user");
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (ctx) {
-        return LoginPage();
-      }));
+          prefs.remove("user");
+      Navigator.of(context).pushReplacementNamed(AppRoutes.Login);
     });
   }
 

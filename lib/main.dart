@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:news_app/src/models/news_models.dart';
 import 'package:news_app/src/models/user_model.dart';
+import 'package:news_app/src/ui/edit_profile.dart';
+import 'package:news_app/src/ui/news_detail.dart';
+import 'package:news_app/src/ui/splash.dart';
 import 'package:news_app/src/utils/app_theme_utils.dart';
-import 'package:news_app/src/utils/app_utils.dart';
+import 'package:news_app/src/utils/constants.dart';
 import 'package:news_app/src/validation/edit_profile_validation.dart';
 import 'package:news_app/src/validation/login_validation.dart';
 import 'package:provider/provider.dart';
@@ -9,28 +13,39 @@ import 'package:provider/provider.dart';
 import 'src/ui/home.dart';
 import 'src/ui/login.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  final initialPage = await _getInitialPage();
+void main() {
   final materialApp = MaterialApp(
     title: "NewsApp",
-    home: initialPage,
     theme: buildAppTheme(),
+    initialRoute: AppRoutes.Splash,
+    routes: {
+      AppRoutes.Splash: (context) => SplashPage(),
+      AppRoutes.Login: (context) => LoginPage(),
+      AppRoutes.Home: (context) => HomePage(),
+      AppRoutes.EditProfile: (context) => EditProfilePage(),
+    },
+    onGenerateRoute: (routeSettings) {
+      switch (routeSettings.name) {
+        case AppRoutes.NewsDetail:
+          return MaterialPageRoute(builder: (context) {
+            return NewsDetailPage(routeSettings.arguments as NewsArticle);
+          });
+        case AppRoutes.NewsWebView:
+          return MaterialPageRoute(builder: (context) {
+            return NewsWebPage(routeSettings.arguments as String);
+          });
+        default:
+          return null;
+      }
+    },
   );
   final changeProviders = MultiProvider(
     providers: [
-      ChangeNotifierProvider(create: (c) => UserModel()),
-      ChangeNotifierProvider(create: (c) => LoginValidation()),
-      ChangeNotifierProvider(create: (c) => EditProfileValidation())
+      ChangeNotifierProvider(create: (context) => UserModel()),
+      ChangeNotifierProvider(create: (context) => LoginValidation()),
+      ChangeNotifierProvider(create: (context) => EditProfileValidation())
     ],
     child: materialApp,
   );
   runApp(changeProviders);
-}
-
-Future<Widget> _getInitialPage() async {
-  if (await isLoggedIn())
-    return HomePage();
-  else
-    return LoginPage();
 }

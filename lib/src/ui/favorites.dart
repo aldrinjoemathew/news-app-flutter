@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:news_app/src/models/news_models.dart';
 import 'package:news_app/src/repositories/news_repo.dart';
-import 'package:news_app/src/ui/news_detail.dart';
 import 'package:news_app/src/utils/app_theme_utils.dart';
+import 'package:news_app/src/utils/constants.dart';
 
 class FavoritePage extends StatefulWidget {
   @override
@@ -139,8 +139,9 @@ class FavoriteListItem extends StatelessWidget {
   }
 
   void _onTapNewsItem(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
-      return NewsDetailPage(favoriteItem);
-    }));
+    Navigator.of(context).pushNamed(
+      AppRoutes.NewsDetail,
+      arguments: favoriteItem,
+    );
   }
 }

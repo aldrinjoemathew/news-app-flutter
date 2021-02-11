@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:news_app/src/repositories/user_repo.dart';
 import 'package:news_app/src/utils/app_theme_utils.dart';
 import 'package:news_app/src/utils/app_utils.dart';
+import 'package:news_app/src/utils/constants.dart';
 import 'package:news_app/src/validation/login_validation.dart';
 import 'package:provider/provider.dart';
-
-import 'home.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -128,9 +127,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _pushHomePage() {
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (ctx) {
-      return HomePage();
-    }));
+    Navigator.of(context).pushReplacementNamed(AppRoutes.Home);
   }
 
   Widget _getLoginLogo() {

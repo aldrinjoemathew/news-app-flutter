@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:news_app/src/ui/favorites.dart';
 import 'package:news_app/src/ui/user_settings.dart';
+import 'package:news_app/src/utils/constants.dart';
 
-import 'edit_profile.dart';
 import 'news_list.dart';
 
 class HomePage extends StatefulWidget {
@@ -70,8 +70,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _openEditProfile() {
-    Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
-      return EditProfilePage();
-    }));
+    Navigator.of(context).pushReplacementNamed(AppRoutes.EditProfile);
   }
 }

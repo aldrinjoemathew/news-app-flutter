@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:news_app/src/models/news_models.dart';
 import 'package:news_app/src/utils/app_theme_utils.dart';
 import 'package:news_app/src/utils/app_utils.dart';
+import 'package:news_app/src/utils/constants.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class NewsDetailPage extends StatelessWidget {
@@ -81,7 +82,7 @@ class NewsDetailPage extends StatelessWidget {
               color: AppColors.white,
             ),
             onPressed: () {
-              _readMore(context);
+              _openWebView(context);
             },
           )
         ],
@@ -96,10 +97,11 @@ class NewsDetailPage extends StatelessWidget {
     );
   }
 
-  void _readMore(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
-      return NewsWebPage(newsItem.url);
-    }));
+  void _openWebView(BuildContext context) {
+    Navigator.of(context).pushNamed(
+      AppRoutes.NewsWebView,
+      arguments: newsItem.url,
+    );
   }
 
   void _addReadMore(BuildContext context, List<Widget> childWidgets) {
@@ -108,7 +110,7 @@ class NewsDetailPage extends StatelessWidget {
       children: [
         TextButton(
           onPressed: () {
-            _readMore(context);
+            _openWebView(context);
           },
           child: Text(
             "Read more",
