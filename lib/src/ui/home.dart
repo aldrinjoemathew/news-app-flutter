@@ -70,6 +70,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _openEditProfile() {
-    Navigator.of(context).pushReplacementNamed(AppRoutes.EditProfile);
+    Navigator.of(context).pushNamed(AppRoutes.EditProfile);
   }
 }
