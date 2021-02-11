@@ -227,7 +227,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   void _popRoute() {
-    Navigator.of(context).pop(null);
+    Navigator.of(context).pop();
   }
 
   Future _pickImage() async {
