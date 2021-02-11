@@ -2,6 +2,7 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:news_app/src/models/users.dart';
+import 'package:news_app/src/utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app_theme_utils.dart';
@@ -90,8 +91,8 @@ Future<bool> hasNetworkConnection() async {
 String getFormattedDate(String utcString) {
   // sample date: 2021-01-18T08:03:16Z
   try {
-    final date = DateFormat("yyyy-mm-dd hh:mm:ssZ").parse(utcString);
-    return DateFormat("dd MMM, yyyy hh:mm a").format(date);
+    final date = DateFormat(DateFormats.Utc).parse(utcString);
+    return DateFormat("DateFormats.NewsListing").format(date);
   } on FormatException catch (e) {
     print("Date format exception: ${e.message}");
   }
@@ -102,7 +103,7 @@ String getFormattedDate(String utcString) {
 String getFormattedDate(DateTime utcDateTime) {
   // sample date: 2021-01-18T08:03:16Z
   try {
-    return DateFormat("dd MMM, yyyy hh:mm a").format(utcDateTime);
+    return DateFormat(DateFormats.NewsListing).format(utcDateTime);
   } on FormatException catch (e) {
     print("Date format exception: ${e.message}");
   }

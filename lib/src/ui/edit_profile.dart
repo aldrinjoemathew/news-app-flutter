@@ -8,6 +8,7 @@ import 'package:news_app/src/models/user_model.dart';
 import 'package:news_app/src/models/users.dart';
 import 'package:news_app/src/utils/app_theme_utils.dart';
 import 'package:news_app/src/utils/app_utils.dart';
+import 'package:news_app/src/utils/constants.dart';
 import 'package:news_app/src/validation/edit_profile_validation.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -226,7 +227,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   void _popRoute() {
-    Navigator.of(context).pop();
+    Navigator.of(context).pop(null);
   }
 
   Future _pickImage() async {
@@ -249,7 +250,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         initialDate: DateTime.now(),
         firstDate: DateTime(1990),
         lastDate: DateTime.now());
-    final dateString = DateFormat("yyyy/MM/dd").format(selectedDate);
+    final dateString = DateFormat(DateFormats.DateOfBirth).format(selectedDate);
     print("Selected date: $dateString");
     _validationService.changeDob(dateString);
     if (dateString?.isNotEmpty == true) {

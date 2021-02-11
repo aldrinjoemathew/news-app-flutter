@@ -14,38 +14,45 @@ import 'src/ui/home.dart';
 import 'src/ui/login.dart';
 
 void main() {
-  final materialApp = MaterialApp(
-    title: "NewsApp",
-    theme: buildAppTheme(),
-    initialRoute: AppRoutes.Splash,
-    routes: {
-      AppRoutes.Splash: (context) => SplashPage(),
-      AppRoutes.Login: (context) => LoginPage(),
-      AppRoutes.Home: (context) => HomePage(),
-      AppRoutes.EditProfile: (context) => EditProfilePage(),
-    },
-    onGenerateRoute: (routeSettings) {
-      switch (routeSettings.name) {
-        case AppRoutes.NewsDetail:
-          return MaterialPageRoute(builder: (context) {
-            return NewsDetailPage(routeSettings.arguments as NewsArticle);
-          });
-        case AppRoutes.NewsWebView:
-          return MaterialPageRoute(builder: (context) {
-            return NewsWebPage(routeSettings.arguments as String);
-          });
-        default:
-          return null;
-      }
-    },
-  );
-  final changeProviders = MultiProvider(
-    providers: [
-      ChangeNotifierProvider(create: (context) => UserModel()),
-      ChangeNotifierProvider(create: (context) => LoginValidation()),
-      ChangeNotifierProvider(create: (context) => EditProfileValidation())
-    ],
-    child: materialApp,
-  );
-  runApp(changeProviders);
+  runApp(NewsApp());
+}
+
+class NewsApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final materialApp = MaterialApp(
+      title: "NewsApp",
+      theme: buildAppTheme(),
+      initialRoute: AppRoutes.Splash,
+      routes: {
+        AppRoutes.Splash: (context) => SplashPage(),
+        AppRoutes.Login: (context) => LoginPage(),
+        AppRoutes.Home: (context) => HomePage(),
+        AppRoutes.EditProfile: (context) => EditProfilePage(),
+      },
+      onGenerateRoute: (routeSettings) {
+        switch (routeSettings.name) {
+          case AppRoutes.NewsDetail:
+            return MaterialPageRoute(builder: (context) {
+              return NewsDetailPage(routeSettings.arguments as NewsArticle);
+            });
+          case AppRoutes.NewsWebView:
+            return MaterialPageRoute(builder: (context) {
+              return NewsWebPage(routeSettings.arguments as String);
+            });
+          default:
+            return null;
+        }
+      },
+    );
+    final changeProviders = MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => UserModel()),
+        ChangeNotifierProvider(create: (context) => LoginValidation()),
+        ChangeNotifierProvider(create: (context) => EditProfileValidation())
+      ],
+      child: materialApp,
+    );
+    return changeProviders;
+  }
 }

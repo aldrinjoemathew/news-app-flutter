@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:news_app/src/utils/constants.dart';
 import 'package:news_app/src/validation/validation_item.dart';
 
 class EditProfileValidation with ChangeNotifier {
@@ -47,7 +48,7 @@ class EditProfileValidation with ChangeNotifier {
       _dob = ValidationItem(null, "DOB must not be empty");
     } else {
       try {
-        DateFormat("yyyy/MM/dd").parse(value);
+        DateFormat(DateFormats.DateOfBirth).parse(value);
       } on FormatException catch (e) {
         _dob = ValidationItem(null, "Invalid date format");
         notifyListeners();
