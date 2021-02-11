@@ -60,7 +60,16 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
-    return scaffold;
+
+    final willPopScope = WillPopScope(
+        child: scaffold,
+        onWillPop: () async {
+          if (_selectedIndex == 0) return true;
+          _onTabSelected(0);
+          return false;
+        });
+
+    return willPopScope;
   }
 
   void _onTabSelected(int index) {
