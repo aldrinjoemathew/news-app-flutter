@@ -96,6 +96,7 @@ class _NewsListPageState extends State<NewsListPage> {
       child: Icon(Icons.filter_alt),
     );
     return Scaffold(
+      backgroundColor: AppColors.beige,
       floatingActionButton: Padding(
         child: filterFab,
         padding: EdgeInsets.only(bottom: 16),
@@ -288,7 +289,7 @@ class _NewsListPageState extends State<NewsListPage> {
   }
 }
 
-class NewsListItem extends StatelessWidget {
+class NewsListItem extends StatefulWidget {
   final NewsArticle newsItem;
 
   final OnTapFavorite _onTapFavorite;
@@ -298,15 +299,39 @@ class NewsListItem extends StatelessWidget {
   NewsListItem(
       this.newsItem, this._onTapFavorite, this._isFavorite, this._isLastItem);
 
+  @override
+  _NewsListItemState createState() => _NewsListItemState();
+}
+
+class _NewsListItemState extends State<NewsListItem>
+    with SingleTickerProviderStateMixin {
+  AnimationController _animController;
+  Animation _animation;
+  final double _iconSize = 32;
+
+  NewsArticle get _newsItem => widget.newsItem;
+
+  @override
+  void initState() {
+    super.initState();
+    _initFavoriteAnimation();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _animController?.dispose();
+  }
+
   void _addImage(List<Widget> childWidgets) {
-    if (newsItem.urlToImage != null && newsItem.urlToImage.isNotEmpty) {
+    if (_newsItem.urlToImage != null && _newsItem.urlToImage.isNotEmpty) {
       childWidgets.add(SizedBox(
         height: 8,
       ));
       childWidgets.add(ClipRRect(
         borderRadius: BorderRadius.all(Radius.circular(4)),
         child: Image.network(
-          newsItem.urlToImage,
+          _newsItem.urlToImage,
           width: double.infinity,
           height: 200,
           fit: BoxFit.cover,
@@ -324,12 +349,12 @@ class NewsListItem extends StatelessWidget {
   }
 
   void _addDesc(List<Widget> childWidgets) {
-    if (newsItem.description != null && newsItem.description.isNotEmpty) {
+    if (_newsItem.description != null && _newsItem.description.isNotEmpty) {
       childWidgets.add(SizedBox(
         height: 8,
       ));
       childWidgets.add(Text(
-        newsItem.description ?? "",
+        _newsItem.description ?? "",
         maxLines: 3,
         style: TextStyle(
           fontSize: 16,
@@ -343,7 +368,7 @@ class NewsListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<Widget> childWidgets = [];
     childWidgets.add(Text(
-      newsItem.title,
+      _newsItem.title,
       maxLines: 2,
       style: TextStyle(
         fontSize: 18,
@@ -355,7 +380,7 @@ class NewsListItem extends StatelessWidget {
     childWidgets.add(Container(
       margin: EdgeInsets.only(top: 8),
       alignment: Alignment.centerLeft,
-      child: Text(getFormattedDate(newsItem.publishedAt) ?? ""),
+      child: Text(getFormattedDate(_newsItem.publishedAt) ?? ""),
     ));
     _addDesc(childWidgets);
     childWidgets.add(Row(
@@ -364,24 +389,27 @@ class NewsListItem extends StatelessWidget {
         Padding(
           padding: EdgeInsets.all(4),
           child: IconButton(
-            icon: _isFavorite
+            iconSize: _animation?.value ?? _iconSize,
+            icon: widget._isFavorite
                 ? Icon(Icons.favorite, color: AppColors.favoriteRed)
                 : Icon(Icons.favorite_border),
             onPressed: () {
-              _onTapFavorite(newsItem);
+              widget._onTapFavorite(_newsItem);
+              _startAnimation();
             },
           ),
         ),
         Padding(
           padding: EdgeInsets.all(4),
           child: IconButton(
+            iconSize: _iconSize,
             icon: Icon(Icons.share),
             onPressed: () {},
           ),
         )
       ],
     ));
-    if (!_isLastItem) {
+    if (!widget._isLastItem) {
       childWidgets.add(Divider(color: AppColors.darkKhaki));
     } else {
       childWidgets.add(SizedBox(height: 60));
@@ -398,10 +426,27 @@ class NewsListItem extends StatelessWidget {
       elevation: 2,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(8))),
-      margin: EdgeInsets.fromLTRB(8, 8, 8, _isLastItem ? 8 : 0),
+      margin: EdgeInsets.fromLTRB(8, 8, 8, widget._isLastItem ? 8 : 0),
       child: content,
     );
     return content;
+  }
+
+  void _startAnimation() async {
+    await _animController?.forward();
+    _animController?.reverse();
+  }
+
+  void _initFavoriteAnimation() {
+    _animController = AnimationController(
+      duration: Duration(milliseconds: 100),
+      vsync: this,
+    );
+    _animation =
+        Tween<double>(begin: _iconSize, end: 24).animate(_animController)
+          ..addListener(() {
+            setState(() {});
+          });
   }
 }
 
