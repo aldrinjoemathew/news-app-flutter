@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 ThemeData buildAppTheme() {
   final ThemeData base = ThemeData.light();
   return base.copyWith(
       appBarTheme: AppBarTheme(
+          textTheme: _getTextTheme(base.textTheme),
           iconTheme: IconThemeData(color: AppColors.white),
           actionsIconTheme: IconThemeData(color: AppColors.white)),
       colorScheme: _shrineColorScheme,
@@ -29,7 +31,7 @@ ThemeData buildAppTheme() {
 }
 
 TextTheme _getTextTheme(TextTheme base) {
-  return base.apply(fontFamily: "Merriweather");
+  return GoogleFonts.merriweatherTextTheme(base);
 }
 
 IconThemeData _customIconTheme(IconThemeData original) {

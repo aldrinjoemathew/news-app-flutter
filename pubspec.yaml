@@ -17,6 +17,7 @@ dependencies:
   pull_to_refresh: ^1.6.3
   webview_flutter: ^1.0.7
   image_picker: ^0.6.7+22
+  google_fonts: ^1.1.2
 
 dev_dependencies:
   flutter_test:
