@@ -114,6 +114,7 @@ class _NewsListPageState extends State<NewsListPage> {
         context: context,
         barrierColor: AppColors.darkKhaki.withOpacity(0.3),
         isDismissible: true,
+        isScrollControlled: true,
         builder: (ctx) {
           return getCategoryBottomSheet();
         });
@@ -133,41 +134,65 @@ class _NewsListPageState extends State<NewsListPage> {
   }
 
   Widget getCategoryBottomSheet() {
-    Iterable<Widget> listViewChildren = NewsRepo.categories.map((e) {
+    Iterable<Widget> listViewChildren =
+        NewsRepo.getNewsCategories().map((newsCategory) {
       return GestureDetector(
         behavior: HitTestBehavior.translucent,
         child: Container(
-          color: isSelected(e) ? AppColors.darkKhaki.withOpacity(0.5) : null,
+          margin: EdgeInsets.all(12),
+          decoration: ShapeDecoration(
+            color: isSelected(newsCategory.categoryName)
+                ? AppColors.sienna.withOpacity(1)
+                : AppColors.darkKhaki.withOpacity(1),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(32))),
+          ),
           padding: EdgeInsets.all(12),
           alignment: Alignment.center,
-          child: Text(
-            e,
-            style: TextStyle(
-                fontWeight: isSelected(e) ? FontWeight.bold : FontWeight.normal,
-                color: AppColors.white,
-                fontSize: isSelected(e) ? 20 : 16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Image.asset(
+                newsCategory.imageAsset ?? "assets/ic_news.png",
+                height: 50,
+                width: 50,
+              ),
+              SizedBox(height: 12),
+              Text(newsCategory.categoryName,
+                  style: TextStyle(
+                      fontWeight: isSelected(newsCategory.categoryName)
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                      color: AppColors.white,
+                      fontSize: 18))
+            ],
           ),
         ),
         onTap: () {
-          _onTapCategory(e);
+          _onTapCategory(newsCategory.categoryName);
         },
       );
     });
-    listViewChildren =
-        ListTile.divideTiles(tiles: listViewChildren, color: AppColors.white);
+    /*listViewChildren =
+        ListTile.divideTiles(tiles: listViewChildren, color: AppColors.white);*/
+    final listView = ListView(
+      children: listViewChildren.toList(),
+    );
     return BottomSheet(
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(32), topRight: Radius.circular(32))),
-        backgroundColor: AppColors.sienna,
+        backgroundColor: AppColors.darkOlive.withOpacity(0.95),
         onClosing: () {},
         builder: (ctx) {
           return Container(
-            height: 250,
-            color: Colors.white.withOpacity(0),
+            height: 500,
             padding: EdgeInsets.fromLTRB(0, 32, 0, 16),
-            child: ListView(
+            child: GridView.count(
               children: listViewChildren.toList(),
+              crossAxisCount: 2,
+              childAspectRatio: 1.1,
             ),
           );
         });
