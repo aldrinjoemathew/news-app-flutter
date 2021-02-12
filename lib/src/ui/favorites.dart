@@ -3,6 +3,7 @@ import 'package:news_app/src/models/news_models.dart';
 import 'package:news_app/src/repositories/news_repo.dart';
 import 'package:news_app/src/utils/app_theme_utils.dart';
 import 'package:news_app/src/utils/constants.dart';
+import 'package:share/share.dart';
 
 class FavoritePage extends StatefulWidget {
   @override
@@ -105,7 +106,9 @@ class FavoriteListItem extends StatelessWidget {
         padding: EdgeInsets.all(4),
         child: IconButton(
           icon: Icon(Icons.share),
-          onPressed: () {},
+          onPressed: () {
+            Share.share(favoriteItem.url);
+          },
         ),
       ),
     ));

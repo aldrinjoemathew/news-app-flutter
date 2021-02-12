@@ -10,7 +10,7 @@
 
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="news_app"
+        android:label="News App"
         android:icon="@mipmap/ic_launcher">
 
         <activity

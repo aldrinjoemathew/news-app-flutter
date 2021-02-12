@@ -5,6 +5,7 @@ import 'package:news_app/src/utils/app_theme_utils.dart';
 import 'package:news_app/src/utils/app_utils.dart';
 import 'package:news_app/src/utils/constants.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:share/share.dart';
 
 class NewsListPage extends StatefulWidget {
   @override
@@ -404,7 +405,9 @@ class _NewsListItemState extends State<NewsListItem>
           child: IconButton(
             iconSize: _iconSize,
             icon: Icon(Icons.share),
-            onPressed: () {},
+            onPressed: () {
+              Share.share(_newsItem.url);
+            },
           ),
         )
       ],
