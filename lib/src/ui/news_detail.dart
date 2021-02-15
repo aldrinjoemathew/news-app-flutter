@@ -12,21 +12,22 @@ class NewsDetailPage extends StatelessWidget {
 
   NewsDetailPage(this.newsItem);
 
-  void _addImage(List<Widget> childWidgets) {
-    if (newsItem.urlToImage != null && newsItem.urlToImage.isNotEmpty) {
-      childWidgets.add(SizedBox(
-        height: 8,
-      ));
-      childWidgets.add(ClipRRect(
-        borderRadius: BorderRadius.all(Radius.circular(4)),
+  bool _hasImage() {
+    return newsItem.urlToImage != null && newsItem.urlToImage.isNotEmpty;
+  }
+
+  Widget _getNewsImageWidget() {
+    if (_hasImage()) {
+      return Opacity(
+        opacity: 0.7,
         child: Image.network(
           newsItem.urlToImage,
           width: double.infinity,
-          height: 200,
           fit: BoxFit.cover,
         ),
-      ));
+      );
     }
+    return null;
   }
 
   void _addContent(List<Widget> childWidgets) {
@@ -35,65 +36,94 @@ class NewsDetailPage extends StatelessWidget {
         height: 8,
       ));
       childWidgets.add(Text(
-        newsItem.content ?? "",
+        "${newsItem.content}\n${newsItem.content}\n${newsItem.content}" ?? "",
         style: TextStyle(
-          fontSize: 16,
+          fontSize: 22,
         ),
       ));
     }
   }
 
+  Widget _getNewsTitleWidget() {
+    return Text(
+      "News Details",
+      style: TextStyle(
+        fontSize: 18,
+        color: AppColors.white,
+        fontWeight: FontWeight.w700,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final List<Widget> childWidgets = [
-      Text(
-        newsItem.title,
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
-        ),
-      )
-    ];
+    final List<Widget> childWidgets = [];
+    childWidgets.add(Text(
+      newsItem.title,
+      style: TextStyle(
+        fontSize: 24,
+        fontWeight: FontWeight.w700,
+      ),
+    ));
     if (newsItem.author?.isNotEmpty == true) {
       childWidgets.add(Container(
         margin: EdgeInsets.only(top: 8),
         alignment: Alignment.centerLeft,
         child: Text(
           "By ${newsItem.author}",
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
         ),
       ));
     }
     childWidgets.add(Container(
       margin: EdgeInsets.only(top: 8),
       alignment: Alignment.centerLeft,
-      child: Text(getFormattedDate(newsItem.publishedAt) ?? ""),
+      child: Text(
+        getFormattedDate(newsItem.publishedAt) ?? "",
+        style: TextStyle(fontSize: 16),
+      ),
     ));
-    _addImage(childWidgets);
     _addContent(childWidgets);
     // _addReadMore(context, childWidgets);
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("News"),
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.open_in_browser,
-              color: AppColors.white,
-            ),
-            onPressed: () {
-              _openWebView(context);
-            },
-          )
-        ],
-      ),
-      body: Container(
-        color: AppColors.surfaceBg,
-        padding: EdgeInsets.all(16),
-        child: ListView(
-          children: childWidgets,
+    final sliverParent = CustomScrollView(
+      slivers: [
+        SliverAppBar(
+          pinned: true,
+          backgroundColor: AppColors.darkOlive,
+          title: _getNewsTitleWidget(),
+          expandedHeight: _hasImage() ? 250 : null,
+          flexibleSpace: Opacity(
+            opacity: 0.8,
+            child: _getNewsImageWidget(),
+          ),
         ),
-      ),
+        SliverPadding(
+          padding: EdgeInsets.all(12),
+          sliver: SliverList(
+            delegate: SliverChildListDelegate(childWidgets),
+          ),
+        )
+      ],
+    );
+    final appBar = AppBar(
+      title: Text("News"),
+      actions: [
+        IconButton(
+          icon: Icon(
+            Icons.open_in_browser,
+            color: AppColors.white,
+          ),
+          onPressed: () {
+            _openWebView(context);
+          },
+        )
+      ],
+    );
+    return Scaffold(
+      body: sliverParent,
     );
   }
 
