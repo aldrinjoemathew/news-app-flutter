@@ -26,7 +26,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> appBarActions;
+    List<Widget> appBarActions = [];
     if (_selectedIndex == 2) {
       appBarActions = [
         IconButton(icon: Icon(Icons.mode_edit), onPressed: _openEditProfile)

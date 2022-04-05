@@ -5,6 +5,9 @@ import 'package:news_app/src/utils/app_utils.dart';
 import 'package:news_app/src/utils/constants.dart';
 import 'package:news_app/src/validation/login_validation.dart';
 import 'package:provider/provider.dart';
+import 'package:collection/collection.dart';
+
+import '../models/users.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -16,7 +19,7 @@ class _LoginPageState extends State<LoginPage> {
   final _loginFormKey = GlobalKey<FormState>();
   final _loginFontStyle = TextStyle(fontSize: 16);
   var _passwordShown = false;
-  LoginValidation _validationService;
+  late LoginValidation _validationService;
 
   @override
   void dispose() {
@@ -103,13 +106,12 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  void _loginUser(String email, String password) async {
+  void _loginUser(String? email, String? password) async {
     if (_loading) return;
     setLoading(true);
-    email = email.trim().toLowerCase();
-    final user = UserRepo().getUsers().firstWhere(
-        (element) => element.email.toLowerCase() == email,
-        orElse: () => null);
+    email = email?.trim().toLowerCase();
+    User? user = UserRepo().getUsers().firstWhereOrNull(
+        (element) => element.email.toLowerCase() == email);
     if (user == null) {
       showOkAlert(context, "Error", "User not found");
       setLoading(false);

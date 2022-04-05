@@ -13,14 +13,14 @@ class NewsDetailPage extends StatelessWidget {
   NewsDetailPage(this.newsItem);
 
   void _addImage(List<Widget> childWidgets) {
-    if (newsItem.urlToImage != null && newsItem.urlToImage.isNotEmpty) {
+    if (newsItem.urlToImage != null && newsItem.urlToImage!.isNotEmpty) {
       childWidgets.add(SizedBox(
         height: 8,
       ));
       childWidgets.add(ClipRRect(
         borderRadius: BorderRadius.all(Radius.circular(4)),
         child: Image.network(
-          newsItem.urlToImage,
+          newsItem.urlToImage!,
           width: double.infinity,
           height: 200,
           fit: BoxFit.cover,
@@ -30,7 +30,7 @@ class NewsDetailPage extends StatelessWidget {
   }
 
   void _addContent(List<Widget> childWidgets) {
-    if (newsItem.content != null && newsItem.content.isNotEmpty) {
+    if (newsItem.content != null && newsItem.content!.isNotEmpty) {
       childWidgets.add(SizedBox(
         height: 8,
       ));
@@ -47,7 +47,7 @@ class NewsDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<Widget> childWidgets = [
       Text(
-        newsItem.title,
+        newsItem.title ?? '',
         style: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w700,

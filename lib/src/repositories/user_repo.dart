@@ -5,6 +5,7 @@ class UserRepo {
     final userList = <User>[];
     userList.add(User.create("Alice", "alice@mail.com", "alice123"));
     userList.add(User.create("Bob", "bob@mail.com", "bob123"));
+    userList.add(User.create("Aldrin", "aldrinjoe@gmail.com", "1234"));
     return userList;
   }
 }

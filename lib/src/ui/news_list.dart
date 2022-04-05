@@ -21,7 +21,7 @@ class _NewsListPageState extends State<NewsListPage> {
   bool _showFilter = false;
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
-  String _selectedCategory;
+  String? _selectedCategory;
 
   @override
   void initState() {
@@ -39,11 +39,10 @@ class _NewsListPageState extends State<NewsListPage> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> stackChildren = [];
-    if (_newsList != null && _newsList.isNotEmpty) {
+    if (_newsList.isNotEmpty) {
       final listView = ListView.builder(
         addAutomaticKeepAlives: false,
         itemBuilder: (ctx, index) {
-          if (index > _listCount - 1) return null;
           if (_shouldLoadMore && index == _newsList.length - 4) {
             // Trigger load more when there are only 3 more items to the bottom.
             _loadMore();
@@ -206,13 +205,13 @@ class _NewsListPageState extends State<NewsListPage> {
     print("loadNews => ${result.status}");
     if (result.isSuccess()) {
       setState(() {
-        _newsList = result.data;
+        _newsList = result.data ?? [];
         _updateListCount();
         _loading = false;
       });
     } else if (result.isFailure()) {
       setState(() {
-        _error = result.error;
+        _error = result.error ?? '';
         _loading = false;
       });
     }
@@ -224,7 +223,7 @@ class _NewsListPageState extends State<NewsListPage> {
     print("refreshNews => ${result.status}");
     if (result.isSuccess()) {
       setState(() {
-        _newsList = result.data;
+        _newsList = result.data ?? [];
         _updateListCount();
         _shouldLoadMore = true;
       });
@@ -241,7 +240,7 @@ class _NewsListPageState extends State<NewsListPage> {
     print("loadMore => ${result.status}");
     if (result.isSuccess()) {
       setState(() {
-        _newsList = result.data;
+        _newsList = result.data ?? [];
         _updateListCount();
         _shouldLoadMore = true;
         _loadingMore = false;
@@ -274,14 +273,14 @@ class NewsListItem extends StatelessWidget {
       this.newsItem, this._onTapFavorite, this._isFavorite, this._isLastItem);
 
   void _addImage(List<Widget> childWidgets) {
-    if (newsItem.urlToImage != null && newsItem.urlToImage.isNotEmpty) {
+    if (newsItem.urlToImage != null && newsItem.urlToImage!.isNotEmpty) {
       childWidgets.add(SizedBox(
         height: 8,
       ));
       childWidgets.add(ClipRRect(
         borderRadius: BorderRadius.all(Radius.circular(4)),
         child: Image.network(
-          newsItem.urlToImage,
+          newsItem.urlToImage!,
           width: double.infinity,
           height: 200,
           fit: BoxFit.cover,
@@ -299,7 +298,7 @@ class NewsListItem extends StatelessWidget {
   }
 
   void _addDesc(List<Widget> childWidgets) {
-    if (newsItem.description != null && newsItem.description.isNotEmpty) {
+    if (newsItem.description != null && newsItem.description!.isNotEmpty) {
       childWidgets.add(SizedBox(
         height: 8,
       ));
@@ -318,7 +317,7 @@ class NewsListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<Widget> childWidgets = [];
     childWidgets.add(Text(
-      newsItem.title,
+      newsItem.title ?? '',
       maxLines: 2,
       style: TextStyle(
         fontSize: 18,

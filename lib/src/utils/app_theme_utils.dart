@@ -38,9 +38,9 @@ IconThemeData _customIconTheme(IconThemeData original) {
 
 const ColorScheme _shrineColorScheme = ColorScheme(
   primary: AppColors.darkOlive,
-  primaryVariant: AppColors.sienna,
+  primaryContainer: AppColors.sienna,
   secondary: AppColors.darkKhaki,
-  secondaryVariant: AppColors.beige,
+  secondaryContainer: AppColors.beige,
   surface: AppColors.white,
   background: AppColors.white,
   error: AppColors.errorRed,
@@ -68,7 +68,7 @@ class AppColors {
   static const red = Colors.red;
 }
 
-MaterialButton getAppFlatBtn(String btnText, VoidCallback onPressed,
+MaterialButton getAppFlatBtn(String btnText, VoidCallback? onPressed,
     {Color btnColor = AppColors.sienna,
     Color disabledBtnColor = AppColors.darkKhaki,
     double borderRadius = 16,

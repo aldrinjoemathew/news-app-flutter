@@ -24,11 +24,13 @@ class NewsApp extends StatelessWidget {
       title: "NewsApp",
       theme: buildAppTheme(),
       initialRoute: AppRoutes.Splash,
+      debugShowCheckedModeBanner: false,
       routes: {
         AppRoutes.Splash: (context) => SplashPage(),
         AppRoutes.Login: (context) => LoginPage(),
         AppRoutes.Home: (context) => HomePage(),
         AppRoutes.EditProfile: (context) => EditProfilePage(),
+        AppRoutes.NewsDetail: (context) => NewsDetailPage(ModalRoute.of(context)!.settings.arguments as NewsArticle),
       },
       onGenerateRoute: (routeSettings) {
         switch (routeSettings.name) {

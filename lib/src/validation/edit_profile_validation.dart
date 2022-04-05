@@ -8,7 +8,7 @@ class EditProfileValidation with ChangeNotifier {
   ValidationItem _emailId = ValidationItem.empty();
   ValidationItem _dob = ValidationItem.empty();
 
-  void setInitialValues({String name, String email, String dob}) {
+  void setInitialValues({String? name, String? email, String? dob}) {
     _name = ValidationItem(name, null);
     _emailId = ValidationItem(email, null);
     _dob = ValidationItem(dob, null);

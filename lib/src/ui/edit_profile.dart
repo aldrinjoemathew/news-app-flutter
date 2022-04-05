@@ -22,11 +22,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final _nameEditingController = TextEditingController();
   final _emailEditingController = TextEditingController();
   final _dobEditingController = TextEditingController();
-  User _user;
+  late User _user;
   bool _saving = false;
-  ImagePicker _imagePicker;
-  File _profileImageFile;
-  EditProfileValidation _validationService;
+  late ImagePicker _imagePicker;
+  File? _profileImageFile;
+  late EditProfileValidation _validationService;
   FocusNode _dobFocusNode = FocusNode();
 
   @override
@@ -47,7 +47,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _validationService = Provider.of<EditProfileValidation>(context);
     final profileImage = _profileImageFile != null
         ? Image.file(
-            _profileImageFile,
+            _profileImageFile!,
             width: 150,
             height: 150,
             fit: BoxFit.fill,
@@ -183,8 +183,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
       _saving = true;
     });
     _validationService.submitForm();
-    _user.name = _validationService.name.value;
-    _user.email = _validationService.emailId.value;
+    _user.name = _validationService.name.value ?? '';
+    _user.email = _validationService.emailId.value ?? '';
     _user.dob = _validationService.dob.value;
     bool saved = await _updateUserDetailsInPref(_user);
     if (saved) {
@@ -203,16 +203,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   void _getUserDetails() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    final user = userFromJson(prefs.getString("user"));
+    final user = userFromJson(prefs.getString("user") ?? '');
     setState(() {
       _user = user;
-      _nameEditingController.text = _user?.name;
-      _emailEditingController.text = _user?.email;
-      _dobEditingController.text = _user?.dob;
+      _nameEditingController.text = _user?.name ?? '';
+      _emailEditingController.text = _user?.email ?? '';
+      _dobEditingController.text = _user?.dob ?? '';
       _validationService.setInitialValues(
           name: _user.name, email: _user.email, dob: _user.dob);
       if (user?.profileImagePath?.isNotEmpty == true) {
-        _profileImageFile = File(user.profileImagePath);
+        _profileImageFile = File(user.profileImagePath!);
       }
     });
   }
@@ -232,11 +232,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Future _pickImage() async {
     final imageFile = await _imagePicker.getImage(source: ImageSource.gallery);
-    if (imageFile.path?.isNotEmpty == true) {
-      _user.profileImagePath = imageFile.path;
-      print("ImagePicker: Image path: ${imageFile.path}");
+    if (imageFile?.path?.isNotEmpty == true) {
+      _user.profileImagePath = imageFile?.path;
+      print("ImagePicker: Image path: ${imageFile?.path}");
       setState(() {
-        _profileImageFile = File(_user.profileImagePath);
+        _profileImageFile = File(_user.profileImagePath!);
       });
     } else {
       print("ImagePicker: Error getting image path");
@@ -250,7 +250,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         initialDate: DateTime.now(),
         firstDate: DateTime(1990),
         lastDate: DateTime.now());
-    final dateString = DateFormat(DateFormats.DateOfBirth).format(selectedDate);
+    final dateString = DateFormat(DateFormats.DateOfBirth).format(selectedDate!);
     print("Selected date: $dateString");
     _validationService.changeDob(dateString);
     if (dateString?.isNotEmpty == true) {

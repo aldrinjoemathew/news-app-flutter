@@ -10,7 +10,7 @@ class FavoritePage extends StatefulWidget {
 }
 
 class _FavoritePageState extends State<FavoritePage> {
-  List<NewsArticle> _favorites;
+  late List<NewsArticle> _favorites;
 
   @override
   void initState() {
@@ -54,11 +54,11 @@ class FavoriteListItem extends StatelessWidget {
   FavoriteListItem(this.favoriteItem);
 
   void _addImage(List<Widget> childWidgets) {
-    if (favoriteItem.urlToImage != null && favoriteItem.urlToImage.isNotEmpty) {
+    if (favoriteItem.urlToImage != null && favoriteItem.urlToImage!.isNotEmpty) {
       childWidgets.add(ClipRRect(
         borderRadius: BorderRadius.all(Radius.circular(4)),
         child: Image.network(
-          favoriteItem.urlToImage,
+          favoriteItem.urlToImage!,
           width: 100,
           height: 100,
           fit: BoxFit.cover,
@@ -69,7 +69,7 @@ class FavoriteListItem extends StatelessWidget {
 
   void _addDesc(List<Widget> childWidgets) {
     if (favoriteItem.description != null &&
-        favoriteItem.description.isNotEmpty) {
+        favoriteItem.description!.isNotEmpty) {
       childWidgets.add(SizedBox(
         height: 4,
       ));
@@ -90,7 +90,7 @@ class FavoriteListItem extends StatelessWidget {
     _addImage(rowChildren);
     final List<Widget> columnChildren = [];
     columnChildren.add(Text(
-      favoriteItem.title,
+      favoriteItem.title ?? '',
       maxLines: 2,
       style: TextStyle(
         fontSize: 18,

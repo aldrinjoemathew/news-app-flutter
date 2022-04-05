@@ -27,7 +27,7 @@ class NewsRepo {
         await DefaultAssetBundle.of(context).loadString("assets/news.json");
     final json = jsonDecode(newsJsonString)['articles'];
     final newsJsonList = List.from(json);
-    var articles = new List<NewsArticle>();
+    List<NewsArticle> articles = [];
     for (final item in newsJsonList) {
       articles.add(NewsArticle.fromJson(item));
     }
@@ -36,7 +36,7 @@ class NewsRepo {
   }
 
   static Future<Resource<List<NewsArticle>>> fetchNews(
-      {bool refresh = false, bool paginate = false, String category}) async {
+      {bool refresh = false, bool paginate = false, String? category}) async {
     if (!refresh &&
         !paginate &&
         NewsData.getInstance().newsList?.isNotEmpty == true) {
@@ -46,7 +46,7 @@ class NewsRepo {
       return Resource.failure("No internet connection");
     }
     try {
-      int page = 1;
+      int? page = 1;
       if (paginate) page = NewsData.getInstance().getPage(pageSize: PAGE_SIZE);
       if (page == null || page < 1) return Resource.empty();
       var queryParams = {
@@ -55,7 +55,7 @@ class NewsRepo {
         'pageSize': '$PAGE_SIZE'
       };
       if (category?.isNotEmpty == true) {
-        queryParams['category'] = category;
+        queryParams['category'] = category!;
       }
       Uri uri = Uri.parse("$NEWS_URL$NEWS_URL_PATH");
       uri = uri.replace(queryParameters: queryParams);
@@ -92,13 +92,13 @@ class NewsRepo {
     return Resource.failure("Unknown error");
   }
 
-  static void updateCategory(String selectedCategory) {
+  static void updateCategory(String? selectedCategory) {
     NewsData.getInstance().category = selectedCategory;
   }
 }
 
 class NewsData {
-  String category;
+  String? category;
 
   NewsData._privateConstructor();
 
@@ -129,7 +129,7 @@ class NewsData {
     newsList.addAll(articles);
   }
 
-  int getPage({int pageSize = 10}) {
+  int? getPage({int pageSize = 10}) {
     if (newsList.isEmpty != false) return 1;
     if (newsList.length % pageSize == 0)
       return (newsList.length ~/ pageSize) + 1;

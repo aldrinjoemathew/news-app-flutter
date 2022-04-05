@@ -1,8 +1,8 @@
 class Resource<T> {
-  String error;
-  Status status;
-  int code;
-  T data;
+  String? error;
+  Status? status;
+  int? code;
+  T? data;
 
   Resource.success(this.data) {
     this.status = Status.Success;

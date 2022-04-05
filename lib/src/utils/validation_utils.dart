@@ -1,9 +1,9 @@
-String validateEmail(String emailValue) {
+String? validateEmail(String emailValue) {
   if (emailValue.isEmpty) return "Enter a valid email";
   return null;
 }
 
-String validatePassword(String passwordValue) {
+String? validatePassword(String passwordValue) {
   if (passwordValue.isEmpty) {
     return "Enter a password";
   } else if (passwordValue.length < 5) {
@@ -12,7 +12,7 @@ String validatePassword(String passwordValue) {
   return null;
 }
 
-String validateText(String value) {
+String? validateText(String value) {
   if (value?.isEmpty != false) {
     return "Enter a valid text";
   }

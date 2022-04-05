@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class NewsCategoryModel extends ChangeNotifier {
-  String _selectedCategory;
+  String? _selectedCategory;
 
   get selectedCategory => _selectedCategory;
 

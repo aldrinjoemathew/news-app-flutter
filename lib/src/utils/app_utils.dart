@@ -12,7 +12,7 @@ Color getAppThemeColor() {
 }
 
 void showOkAlert(BuildContext context, String title, String msg,
-    {VoidCallback okAction, bool showCancel = false, String okText = "Ok"}) {
+    {VoidCallback? okAction, bool showCancel = false, String okText = "Ok"}) {
   final actions = [
     FlatButton(
         onPressed: () {
@@ -100,10 +100,10 @@ String getFormattedDate(String utcString) {
 }
 */
 
-String getFormattedDate(DateTime utcDateTime) {
+String? getFormattedDate(DateTime? utcDateTime) {
   // sample date: 2021-01-18T08:03:16Z
   try {
-    return DateFormat(DateFormats.NewsListing).format(utcDateTime);
+    return DateFormat(DateFormats.NewsListing).format(utcDateTime!);
   } on FormatException catch (e) {
     print("Date format exception: ${e.message}");
   }

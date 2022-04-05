@@ -15,8 +15,8 @@ class UserSettingsPage extends StatefulWidget {
 }
 
 class _UserSettingsPageState extends State<UserSettingsPage> {
-  User _user;
-  SharedPreferences prefs;
+  late User _user;
+  late SharedPreferences prefs;
 
   @override
   void initState() {
@@ -28,12 +28,12 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
   Widget build(BuildContext context) {
     final userModel = Provider.of<UserModel>(context);
     if (userModel.user != null) {
-      _user = userModel.user;
+      _user = userModel.user!;
       print('consumer: ${_user.name}');
     }
-    final profileImage = _user?.profileImagePath?.isNotEmpty == true
+    final profileImage = _user.profileImagePath?.isNotEmpty == true
         ? Image.file(
-            File(_user.profileImagePath),
+            File(_user.profileImagePath!),
             width: 150,
             height: 150,
             fit: BoxFit.fill,
@@ -92,9 +92,9 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
 
   void _getUserDetails() async {
     prefs = await SharedPreferences.getInstance();
-    String userJson = prefs.getString("user");
+    String? userJson = prefs.getString("user");
     if (userJson?.isEmpty != false) return;
-    final user = userFromJson(userJson);
+    final user = userFromJson(userJson ?? '');
     setState(() {
       _user = user;
     });

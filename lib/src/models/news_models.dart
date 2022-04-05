@@ -7,9 +7,9 @@ class NewsResponse {
     this.articles,
   });
 
-  String status;
-  int totalResults;
-  List<NewsArticle> articles;
+  String? status;
+  int? totalResults;
+  List<NewsArticle>? articles;
 
   factory NewsResponse.fromJson(Map<String, dynamic> json) => NewsResponse(
         status: json["status"],
@@ -21,7 +21,7 @@ class NewsResponse {
   Map<String, dynamic> toJson() => {
         "status": status,
         "totalResults": totalResults,
-        "articles": List<dynamic>.from(articles.map((x) => x.toJson())),
+        "articles": articles != null ? List<dynamic>.from(articles!.map((x) => x.toJson())) : [],
       };
 }
 
@@ -37,14 +37,14 @@ class NewsArticle {
     this.content,
   });
 
-  Source source;
-  String author;
-  String title;
-  String description;
-  String url;
-  String urlToImage;
-  DateTime publishedAt;
-  String content;
+  Source? source;
+  String? author;
+  String? title;
+  String? description;
+  String? url;
+  String? urlToImage;
+  DateTime? publishedAt;
+  String? content;
 
   factory NewsArticle.fromJson(Map<String, dynamic> json) => NewsArticle(
         source: Source.fromJson(json["source"]),
@@ -58,25 +58,25 @@ class NewsArticle {
       );
 
   Map<String, dynamic> toJson() => {
-        "source": source.toJson(),
+        "source": source?.toJson(),
         "author": author == null ? null : author,
         "title": title,
         "description": description == null ? null : description,
         "url": url,
         "urlToImage": urlToImage == null ? null : urlToImage,
-        "publishedAt": publishedAt.toIso8601String(),
+        "publishedAt": publishedAt?.toIso8601String(),
         "content": content == null ? null : content,
       };
 
   @override
   bool operator ==(Object other) {
-    NewsArticle otherNews;
+    NewsArticle? otherNews;
     if (other is NewsArticle) otherNews = other;
     return this.url == otherNews?.url;
   }
 
   @override
-  int get hashCode => (this.url?.length ?? 0) + (this.title.length ?? 0);
+  int get hashCode => (this.url?.length ?? 0) + (this.title?.length ?? 0);
 }
 
 class Source {
@@ -85,8 +85,8 @@ class Source {
     this.name,
   });
 
-  String id;
-  String name;
+  String? id;
+  String? name;
 
   factory Source.fromJson(Map<String, dynamic> json) => Source(
         id: json["id"] == null ? null : json["id"],
