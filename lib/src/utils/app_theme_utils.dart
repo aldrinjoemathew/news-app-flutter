@@ -68,13 +68,25 @@ class AppColors {
   static const red = Colors.red;
 }
 
-MaterialButton getAppFlatBtn(String btnText, VoidCallback? onPressed,
+ElevatedButton getAppFlatBtn(String btnText, VoidCallback? onPressed,
     {Color btnColor = AppColors.sienna,
     Color disabledBtnColor = AppColors.darkKhaki,
-    double borderRadius = 16,
+    double borderRadius = 8,
     double padding = 16,
     double textSize = 16}) {
-  return FlatButton(
+  return ElevatedButton(
+    style: ElevatedButton.styleFrom(
+      primary: btnColor,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(borderRadius))),
+        padding: EdgeInsets.all(padding),
+    ),
+    child: Text(
+      btnText,
+      style: TextStyle(color: AppColors.white, fontSize: textSize),
+    ),onPressed: onPressed?.call,
+  );
+  /*return FlatButton(
       padding: EdgeInsets.all(padding),
       color: btnColor,
       shape: RoundedRectangleBorder(
@@ -84,5 +96,5 @@ MaterialButton getAppFlatBtn(String btnText, VoidCallback? onPressed,
       child: Text(
         btnText,
         style: TextStyle(color: AppColors.white, fontSize: textSize),
-      ));
+      ));*/
 }

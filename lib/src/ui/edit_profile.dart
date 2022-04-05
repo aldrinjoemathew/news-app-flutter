@@ -66,9 +66,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
           bottom: 0,
           right: 0,
           left: 0,
-          child: FlatButton(
-            height: 48,
-            color: Colors.black.withOpacity(0.5),
+          height: 48,
+          child: TextButton(
+            style: TextButton.styleFrom(
+              backgroundColor: Colors.black.withOpacity(0.5),
+            ),
             child: Text(
               "Change image",
               style:

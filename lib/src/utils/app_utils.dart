@@ -14,7 +14,7 @@ Color getAppThemeColor() {
 void showOkAlert(BuildContext context, String title, String msg,
     {VoidCallback? okAction, bool showCancel = false, String okText = "Ok"}) {
   final actions = [
-    FlatButton(
+    TextButton(
         onPressed: () {
           Navigator.of(context).pop();
           okAction?.call();
@@ -24,7 +24,7 @@ void showOkAlert(BuildContext context, String title, String msg,
   if (showCancel) {
     actions.insert(
         0,
-        FlatButton(
+        TextButton(
             onPressed: () {
               Navigator.of(context).pop();
             },
