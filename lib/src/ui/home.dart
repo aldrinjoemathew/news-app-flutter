@@ -3,7 +3,7 @@ import 'package:news_app/src/ui/favorites.dart';
 import 'package:news_app/src/ui/user_settings.dart';
 import 'package:news_app/src/utils/constants.dart';
 
-import 'news_list.dart';
+import 'news_feed.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -12,7 +12,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final _pages = [
-    Page(title: "News", page: NewsListPage()),
+    Page(title: "News", page: NewsFeedPage()),
     Page(title: "Favorites", page: FavoritePage()),
     Page(title: "Settings", page: UserSettingsPage()),
   ];

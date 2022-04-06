@@ -35,6 +35,32 @@ class NewsRepo {
     return articles;
   }
 
+  static Future<List<NewsArticle>> fetchNewsPage(int pageKey, {String? category}) async {
+    if (!await hasNetworkConnection()) {
+      return throw Exception("No internet connection");
+    }
+    var queryParams = {
+      'country': 'in',
+      'page': '$pageKey',
+      'pageSize': '$PAGE_SIZE'
+    };
+    if (category?.isNotEmpty == true) {
+      queryParams['category'] = category!;
+    }
+    Uri uri = Uri.parse("$NEWS_URL$NEWS_URL_PATH");
+    uri = uri.replace(queryParameters: queryParams);
+    print("URI: $uri");
+    final response = await http.get(
+      uri,
+      headers: {HttpHeaders.authorizationHeader: NEWS_API_KEY},
+    );
+    final newsJsonList = jsonDecode(response.body)['articles'];
+    final List<NewsArticle> articles = List.from(newsJsonList)
+        .map((e) => NewsArticle.fromJson(e))
+        .toList();
+    return articles;
+  }
+
   static Future<Resource<List<NewsArticle>>> fetchNews(
       {bool refresh = false, bool paginate = false, String? category}) async {
     if (!refresh &&
@@ -119,7 +145,7 @@ class NewsData {
   }
 
   bool isFavorite(NewsArticle newsItem) {
-    return favorites?.contains(newsItem) == true;
+    return favorites.contains(newsItem) == true;
   }
 
   void addNewsArticles(List<NewsArticle> articles) {
