@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:news_app/src/models/user_model.dart';
 import 'package:news_app/src/repositories/user_repo.dart';
 import 'package:news_app/src/utils/app_theme_utils.dart';
 import 'package:news_app/src/utils/app_utils.dart';
@@ -122,7 +123,7 @@ class _LoginPageState extends State<LoginPage> {
       setLoading(false);
       return;
     }
-    saveLoggedInUser(user);
+    context.read<UserModel>().updateUserDetails(user);
     await Future.delayed(Duration(seconds: 3));
     setLoading(false);
     _pushHomePage();

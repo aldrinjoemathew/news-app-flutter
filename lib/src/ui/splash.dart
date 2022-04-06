@@ -1,8 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:news_app/src/utils/app_utils.dart';
+import 'package:news_app/src/models/user_model.dart';
 import 'package:news_app/src/utils/constants.dart';
+import 'package:provider/provider.dart';
 
 import '../utils/app_theme_utils.dart';
 
@@ -47,7 +48,7 @@ class _SplashPageState extends State<SplashPage> {
 
   void _checkIfUserIsLoggedIn() async {
     Timer(Duration(seconds: 2), () async {
-      final loggedIn = await isLoggedIn();
+      final loggedIn = await context.read<UserModel>().getCurrentUser() != null;
       Navigator.of(context)
           .pushReplacementNamed(loggedIn ? AppRoutes.Home : AppRoutes.Login);
     });
