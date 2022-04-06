@@ -4,6 +4,7 @@ import 'package:news_app/src/repositories/news_repo.dart';
 import 'package:news_app/src/utils/app_theme_utils.dart';
 import 'package:news_app/src/utils/app_utils.dart';
 import 'package:news_app/src/utils/constants.dart';
+import 'package:news_app/src/utils/extensions.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class NewsListPage extends StatefulWidget {
@@ -90,7 +91,7 @@ class _NewsListPageState extends State<NewsListPage> {
     }
     final filterFab = FloatingActionButton(
       onPressed: () {
-        _onTapFilter(context);
+        showCategoryFilter(context);
       },
       child: Icon(Icons.filter_alt),
     );
@@ -129,6 +130,59 @@ class _NewsListPageState extends State<NewsListPage> {
 
   bool isSelected(String c) {
     return this._selectedCategory == c;
+  }
+
+  void showCategoryFilter(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.25,
+          maxChildSize: 0.3,
+          builder: (context, controller) {
+            return ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(25),
+                topRight: Radius.circular(25),
+              ),
+              child: Container(
+                color: AppColors.darkKhaki,
+                child: ListView.builder(
+                    physics: ClampingScrollPhysics(),
+                    controller: controller,
+                    itemCount: NewsRepo.categories.length,
+                    itemBuilder: (_, i) {
+                      var item = NewsRepo.categories[i];
+                      return GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        child: Container(
+                          color: isSelected(item)
+                              ? AppColors.darkKhaki.withOpacity(0.5)
+                              : null,
+                          padding: EdgeInsets.all(12),
+                          alignment: Alignment.center,
+                          child: Text(
+                            item.toCapitalized(),
+                            style: TextStyle(
+                                fontWeight: isSelected(item)
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                                color: AppColors.white,
+                                fontSize: isSelected(item) ? 20 : 16),
+                          ),
+                        ),
+                        onTap: () {
+                          _onTapCategory(item);
+                        },
+                      );
+                    }),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   Widget getCategoryBottomSheet() {

@@ -20,41 +20,34 @@ void main() {
 class NewsApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final materialApp = MaterialApp(
-      title: "NewsApp",
-      theme: buildAppTheme(),
-      initialRoute: AppRoutes.Splash,
-      debugShowCheckedModeBanner: false,
-      routes: {
-        AppRoutes.Splash: (context) => SplashPage(),
-        AppRoutes.Login: (context) => LoginPage(),
-        AppRoutes.Home: (context) => HomePage(),
-        AppRoutes.EditProfile: (context) => EditProfilePage(),
-        AppRoutes.NewsDetail: (context) => NewsDetailPage(ModalRoute.of(context)!.settings.arguments as NewsArticle),
-      },
-      onGenerateRoute: (routeSettings) {
-        switch (routeSettings.name) {
-          case AppRoutes.NewsDetail:
-            return MaterialPageRoute(builder: (context) {
-              return NewsDetailPage(routeSettings.arguments as NewsArticle);
-            });
-          case AppRoutes.NewsWebView:
-            return MaterialPageRoute(builder: (context) {
-              return NewsWebPage(routeSettings.arguments as String);
-            });
-          default:
-            return null;
-        }
-      },
-    );
-    final changeProviders = MultiProvider(
+    return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => UserModel()),
         ChangeNotifierProvider(create: (context) => LoginValidation()),
-        ChangeNotifierProvider(create: (context) => EditProfileValidation())
+        ChangeNotifierProvider(create: (context) => EditProfileValidation()),
       ],
-      child: materialApp,
+      child: MaterialApp(
+        title: "NewsApp",
+        theme: buildAppTheme(),
+        initialRoute: AppRoutes.Splash,
+        debugShowCheckedModeBanner: false,
+        routes: {
+          AppRoutes.Splash: (context) => SplashPage(),
+          AppRoutes.Login: (context) => LoginPage(),
+          AppRoutes.Home: (context) => HomePage(),
+          AppRoutes.EditProfile: (context) => EditProfilePage(),
+          AppRoutes.NewsDetail: (context) => NewsDetailPage(
+              ModalRoute.of(context)!.settings.arguments as NewsArticle),
+          AppRoutes.NewsWebView: (context) =>
+              NewsWebPage(ModalRoute.of(context)!.settings.arguments as String),
+        },
+        onGenerateRoute: (settings) {
+          switch (settings.name) {
+            default:
+              return null;
+          }
+        },
+      ),
     );
-    return changeProviders;
   }
 }

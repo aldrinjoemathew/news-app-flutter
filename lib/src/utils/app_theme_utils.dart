@@ -8,9 +8,7 @@ ThemeData buildAppTheme() {
           actionsIconTheme: IconThemeData(color: AppColors.white)),
       colorScheme: _shrineColorScheme,
       toggleableActiveColor: AppColors.lightSteelBlue,
-      accentColor: AppColors.darkKhaki,
       primaryColor: AppColors.darkOlive,
-      buttonColor: AppColors.darkOlive,
       scaffoldBackgroundColor: AppColors.white,
       bottomSheetTheme: BottomSheetThemeData(
         backgroundColor: Colors.black.withOpacity(0),
@@ -79,22 +77,12 @@ ElevatedButton getAppFlatBtn(String btnText, VoidCallback? onPressed,
       primary: btnColor,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(borderRadius))),
-        padding: EdgeInsets.all(padding),
+      padding: EdgeInsets.all(padding),
     ),
     child: Text(
       btnText,
       style: TextStyle(color: AppColors.white, fontSize: textSize),
-    ),onPressed: onPressed?.call,
+    ),
+    onPressed: onPressed?.call,
   );
-  /*return FlatButton(
-      padding: EdgeInsets.all(padding),
-      color: btnColor,
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(borderRadius))),
-      onPressed: onPressed?.call,
-      disabledColor: disabledBtnColor,
-      child: Text(
-        btnText,
-        style: TextStyle(color: AppColors.white, fontSize: textSize),
-      ));*/
 }
