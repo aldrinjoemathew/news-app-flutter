@@ -6,6 +6,9 @@ import 'package:news_app/src/utils/app_theme_utils.dart';
 import 'package:news_app/src/utils/app_utils.dart';
 import 'package:news_app/src/utils/constants.dart';
 import 'package:news_app/src/utils/extensions.dart';
+import 'package:provider/provider.dart';
+
+import '../db/favorites_provider.dart';
 
 class NewsFeedPage extends StatefulWidget {
   @override
@@ -13,6 +16,7 @@ class NewsFeedPage extends StatefulWidget {
 }
 
 class _NewsFeedPageState extends State<NewsFeedPage> {
+  late FavoritesProvider _favorites = context.watch<FavoritesProvider>();
   String? _selectedCategory;
   final PagingController<int, NewsArticle> _pagingController =
       PagingController(firstPageKey: 1);
@@ -23,7 +27,12 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
     _pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });
+    _loadFavorites();
     super.initState();
+  }
+
+  void _loadFavorites() {
+    context.read<FavoritesProvider>().getFavorites();
   }
 
   @override
@@ -63,7 +72,7 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
                   child: NewsListItem(
                     newsItem,
                     _onTapFavorite,
-                    NewsData.getInstance().isFavorite(newsItem),
+                    _isFavorite(newsItem),
                   ),
                   onTap: () {
                     _onTapNewsItem(newsItem);
@@ -86,9 +95,7 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
   }
 
   void _onTapFavorite(NewsArticle newsItem) {
-    setState(() {
-      NewsData.getInstance().updateFavorites(newsItem);
-    });
+    _favorites.toggleFavorite(newsItem);
   }
 
   bool isSelected(String c) {
@@ -186,6 +193,8 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
       _pagingController.error = error;
     }
   }
+
+  bool _isFavorite(NewsArticle newsItem) => _favorites.isFavorite(newsItem);
 }
 
 class NewsListItem extends StatelessWidget {

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:news_app/src/db/favorites_provider.dart';
 import 'package:news_app/src/models/news_models.dart';
 import 'package:news_app/src/repositories/news_repo.dart';
 import 'package:news_app/src/utils/app_theme_utils.dart';
 import 'package:news_app/src/utils/constants.dart';
+import 'package:provider/provider.dart';
 
 class FavoritePage extends StatefulWidget {
   @override
@@ -10,7 +12,7 @@ class FavoritePage extends StatefulWidget {
 }
 
 class _FavoritePageState extends State<FavoritePage> {
-  late List<NewsArticle> _favorites;
+  late List<NewsArticle>? _favorites = context.watch<FavoritesProvider>().favorites;
 
   @override
   void initState() {
@@ -21,11 +23,11 @@ class _FavoritePageState extends State<FavoritePage> {
   @override
   Widget build(BuildContext context) {
     final stackChildren = <Widget>[];
-    if (_favorites != null && _favorites.isNotEmpty) {
+    if (_favorites != null && _favorites!.isNotEmpty) {
       stackChildren.add(ListView.builder(
-          itemCount: _favorites.length,
+          itemCount: _favorites!.length,
           itemBuilder: (ctx, index) {
-            final favorite = _favorites[index];
+            final favorite = _favorites![index];
             return FavoriteListItem(favorite);
           }));
     } else {
@@ -41,10 +43,8 @@ class _FavoritePageState extends State<FavoritePage> {
     );
   }
 
-  void _loadFavorites() async {
-    setState(() {
-      _favorites = NewsData.getInstance().favorites;
-    });
+  void _loadFavorites() {
+    context.read<FavoritesProvider>().getFavorites();
   }
 }
 

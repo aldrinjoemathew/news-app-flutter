@@ -10,7 +10,7 @@ import 'package:news_app/src/utils/app_utils.dart';
 class NewsRepo {
   static const NEWS_URL = "https://newsapi.org";
   static const NEWS_URL_PATH = "/v2/top-headlines";
-  static const NEWS_API_KEY = "96c1c14cda3d41fd8a1af286982fa02e";
+  static const NEWS_API_KEY = "dfb1b2de8ed5464cb6ca6d242afd32f4";
   static const PAGE_SIZE = 10;
   static List<String> categories = [
     'business',

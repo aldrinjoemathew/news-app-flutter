@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:news_app/src/db/favorites_provider.dart';
 import 'package:news_app/src/models/news_models.dart';
 import 'package:news_app/src/models/user_model.dart';
 import 'package:news_app/src/ui/edit_profile.dart';
@@ -25,6 +26,7 @@ class NewsApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => UserModel()),
         ChangeNotifierProvider(create: (context) => LoginValidation()),
         ChangeNotifierProvider(create: (context) => EditProfileValidation()),
+        ChangeNotifierProvider(create: (context) => FavoritesProvider()),
       ],
       child: MaterialApp(
         title: "NewsApp",

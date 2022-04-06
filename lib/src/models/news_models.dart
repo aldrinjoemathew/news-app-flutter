@@ -57,8 +57,34 @@ class NewsArticle {
         content: json["content"] == null ? null : json["content"],
       );
 
+  factory NewsArticle.fromDbJson(Map<String, dynamic> json) => NewsArticle(
+    source: Source(
+      id: json["id"],
+      name: json["name"],
+    ),
+    author: json["author"] == null ? null : json["author"],
+    content: json["content"],
+    description: json["description"] == null ? null : json["description"],
+    publishedAt: DateTime.parse(json["publishedAt"]),
+    title: json["title"],
+    url: json["url"],
+    urlToImage: json["urlToImage"] == null ? null : json["urlToImage"],
+  );
+
   Map<String, dynamic> toJson() => {
         "source": source?.toJson(),
+        "author": author == null ? null : author,
+        "title": title,
+        "description": description == null ? null : description,
+        "url": url,
+        "urlToImage": urlToImage == null ? null : urlToImage,
+        "publishedAt": publishedAt?.toIso8601String(),
+        "content": content == null ? null : content,
+      };
+
+  Map<String, dynamic> toDbJson() => {
+        "id": source?.id,
+        "name": source?.toJson(),
         "author": author == null ? null : author,
         "title": title,
         "description": description == null ? null : description,
