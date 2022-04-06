@@ -7,6 +7,7 @@ import 'package:news_app/src/utils/app_utils.dart';
 import 'package:news_app/src/utils/constants.dart';
 import 'package:news_app/src/utils/extensions.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../db/favorites_provider.dart';
 
@@ -282,7 +283,10 @@ class NewsListItem extends StatelessWidget {
               padding: EdgeInsets.all(4),
               child: IconButton(
                 icon: Icon(Icons.share),
-                onPressed: () {},
+                onPressed: () {
+                  if (newsItem.content != null)
+                    Share.share(newsItem.content!);
+                },
               ),
             )
           ],
