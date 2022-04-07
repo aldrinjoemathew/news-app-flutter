@@ -56,8 +56,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
             "assets/ic_profile_dummy.png",
             width: 150,
             height: 150,
-      fit: BoxFit.fill,
-    );
+            fit: BoxFit.fill,
+          );
     final imageStack = Stack(
       alignment: Alignment.bottomCenter,
       children: [
@@ -74,10 +74,42 @@ class _EditProfilePageState extends State<EditProfilePage> {
             child: Text(
               "Change image",
               style:
-              TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             ),
             onPressed: () {
-              _pickImage();
+              showModalBottomSheet(
+                  isScrollControlled: true,
+                  context: context,
+                  builder: (_) {
+                    return Wrap(
+                      children: [
+                        Column(
+                          children: [
+                            Row(
+                              children: [
+                                SizedBox(width: 10,),
+                                Expanded(
+                                  child: getAppFlatBtn('Take a picture', () {
+                                    Navigator.pop(context);
+                                    _takePicture();
+                                  }),
+                                ),
+                                SizedBox(width: 10,),
+                                Expanded(
+                                  child: getAppFlatBtn('Pick from gallery', () {
+                                    Navigator.pop(context);
+                                    _pickImage();
+                                  }),
+                                ),
+                                SizedBox(width: 10,),
+                              ],
+                            ),
+                            SizedBox(height: 10,),
+                          ]
+                        ),
+                      ],
+                    );
+                  });
             },
           ),
         )
@@ -233,8 +265,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Future _pickImage() async {
-    final imageFile = await _imagePicker.getImage(source: ImageSource.gallery);
-    if (imageFile?.path?.isNotEmpty == true) {
+    final imageFile = await _imagePicker.pickImage(source: ImageSource.gallery);
+    if (imageFile?.path.isNotEmpty == true) {
       _user.profileImagePath = imageFile?.path;
       print("ImagePicker: Image path: ${imageFile?.path}");
       setState(() {
@@ -246,13 +278,28 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
   }
 
+  Future _takePicture() async {
+    final imageFile = await _imagePicker.pickImage(source: ImageSource.camera);
+    if (imageFile?.path.isNotEmpty == true) {
+      _user.profileImagePath = imageFile?.path;
+      print("ImagePicker: Image path: ${imageFile?.path}");
+      setState(() {
+        _profileImageFile = File(_user.profileImagePath!);
+      });
+    } else {
+      print("ImagePicker: Error getting image path");
+      showOkAlert(context, "Error", "Unable to capture image");
+    }
+  }
+
   void _openDatePicker() async {
     final selectedDate = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
         firstDate: DateTime(1990),
         lastDate: DateTime.now());
-    final dateString = DateFormat(DateFormats.DateOfBirth).format(selectedDate!);
+    final dateString =
+        DateFormat(DateFormats.DateOfBirth).format(selectedDate!);
     print("Selected date: $dateString");
     _validationService.changeDob(dateString);
     if (dateString?.isNotEmpty == true) {
