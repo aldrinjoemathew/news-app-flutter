@@ -12,7 +12,8 @@ class FavoritePage extends StatefulWidget {
 }
 
 class _FavoritePageState extends State<FavoritePage> {
-  late FavoritesProvider _favoritesProvider = context.watch<FavoritesProvider>();
+  late FavoritesProvider _favoritesProvider =
+      context.watch<FavoritesProvider>();
 
   @override
   void initState() {
@@ -29,7 +30,12 @@ class _FavoritePageState extends State<FavoritePage> {
               itemCount: _favorites.length,
               itemBuilder: (ctx, index) {
                 final favorite = _favorites[index];
-                return FavoriteListItem(favorite);
+                return Dismissible(
+                    key: Key(favorite.url!),
+                    onDismissed: (direction) {
+                      _favoritesProvider.removeFavorite(favorite);
+                    },
+                    child: FavoriteListItem(favorite));
               })
           : Center(
               child: Text(
