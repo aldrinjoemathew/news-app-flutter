@@ -19,6 +19,13 @@ class _HomePageState extends State<HomePage> {
     Page(title: "Settings", page: UserSettingsPage()),
   ];
   int _selectedIndex = 0;
+  final _pageViewController = PageController();
+
+  @override
+  void dispose() {
+    _pageViewController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,12 +43,25 @@ class _HomePageState extends State<HomePage> {
                     ]
                   : null,
             ),
-            body: _pages[_selectedIndex].page,
+            body: PageView(
+              controller: _pageViewController,
+              children: [
+                _pages[0].page,
+                _pages[1].page,
+                _pages[2].page,
+              ],
+              onPageChanged: _onTabSelected,
+            ),
             bottomNavigationBar: BottomNavigationBar(
               currentIndex: _selectedIndex,
               showSelectedLabels: false,
               showUnselectedLabels: false,
-              onTap: _onTabSelected,
+              onTap: (index) {
+                _onTabSelected(index);
+                _pageViewController.animateToPage(index,
+                    duration: Duration(milliseconds: 200),
+                    curve: Curves.bounceOut);
+              },
               items: [
                 BottomNavigationBarItem(
                     icon: ImageIcon(
