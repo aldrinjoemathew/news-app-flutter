@@ -3,7 +3,6 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
-
   var database;
 
   DatabaseHelper() {
@@ -34,7 +33,8 @@ class DatabaseHelper {
 
   Future<List<NewsArticle>> retrieveFavorites() async {
     final Database db = await initializeDB();
-    final List<Map<String, Object?>> queryResult = await db.query('favorites');
+    final List<Map<String, Object?>> queryResult =
+        await db.query('favorites', orderBy: 'publishedAt DESC');
     return queryResult.map((e) => NewsArticle.fromDbJson(e)).toList();
   }
 }
