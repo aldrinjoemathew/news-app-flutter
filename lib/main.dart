@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:news_app/src/db/favorites_provider.dart';
 import 'package:news_app/src/models/news_models.dart';
@@ -37,14 +38,21 @@ class NewsApp extends StatelessWidget {
           AppRoutes.Splash: (context) => SplashPage(),
           AppRoutes.Login: (context) => LoginPage(),
           AppRoutes.Home: (context) => HomePage(),
-          AppRoutes.EditProfile: (context) => EditProfilePage(),
-          AppRoutes.NewsDetail: (context) => NewsDetailPage(
-              ModalRoute.of(context)!.settings.arguments as NewsArticle),
-          AppRoutes.NewsWebView: (context) =>
-              NewsWebPage(ModalRoute.of(context)!.settings.arguments as String),
         },
-        onGenerateRoute: (settings) {
-          switch (settings.name) {
+        onGenerateRoute: (routeSettings) {
+          switch (routeSettings.name) {
+            case AppRoutes.NewsDetail:
+              return CupertinoPageRoute(builder: (context) {
+                return NewsDetailPage(routeSettings.arguments as NewsArticle);
+              });
+            case AppRoutes.NewsWebView:
+              return CupertinoPageRoute(builder: (context) {
+                return NewsWebPage(routeSettings.arguments as String);
+              });
+            case AppRoutes.EditProfile:
+              return CupertinoPageRoute(builder: (context) {
+                return EditProfilePage();
+              });
             default:
               return null;
           }
