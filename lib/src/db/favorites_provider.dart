@@ -20,6 +20,7 @@ class FavoritesProvider with ChangeNotifier {
   void addFavorite(NewsArticle article) {
     handler.addFavorite(article);
     _favorites.add(article);
+    _favorites.sort((b,a) => (a.publishedAt?.millisecondsSinceEpoch ?? 0).compareTo(b.publishedAt?.millisecondsSinceEpoch ?? 0));
     notifyListeners();
   }
 

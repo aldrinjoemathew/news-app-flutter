@@ -12,8 +12,7 @@ class FavoritePage extends StatefulWidget {
 }
 
 class _FavoritePageState extends State<FavoritePage> {
-  late List<NewsArticle>? _favorites =
-      context.watch<FavoritesProvider>().favorites;
+  late FavoritesProvider _favoritesProvider = context.watch<FavoritesProvider>();
 
   @override
   void initState() {
@@ -23,24 +22,21 @@ class _FavoritePageState extends State<FavoritePage> {
 
   @override
   Widget build(BuildContext context) {
-    final stackChildren = <Widget>[];
-    if (_favorites != null && _favorites!.isNotEmpty) {
-      stackChildren.add(ListView.builder(
-          itemCount: _favorites!.length,
-          itemBuilder: (ctx, index) {
-            final favorite = _favorites![index];
-            return FavoriteListItem(favorite);
-          }));
-    } else {
-      stackChildren.add(Center(
-        child: Text(
-          "No favorites",
-          style: TextStyle(fontSize: 20, color: AppColors.darkKhaki),
-        ),
-      ));
-    }
-    return Stack(
-      children: stackChildren,
+    var _favorites = _favoritesProvider.favorites;
+    return Container(
+      child: _favorites != null && _favorites.isNotEmpty
+          ? ListView.builder(
+              itemCount: _favorites.length,
+              itemBuilder: (ctx, index) {
+                final favorite = _favorites[index];
+                return FavoriteListItem(favorite);
+              })
+          : Center(
+              child: Text(
+                "No favorites",
+                style: TextStyle(fontSize: 20, color: AppColors.darkKhaki),
+              ),
+            ),
     );
   }
 

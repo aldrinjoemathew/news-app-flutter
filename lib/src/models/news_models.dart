@@ -1,4 +1,4 @@
-
+import 'package:news_app/src/utils/extensions.dart';
 
 class NewsResponse {
   NewsResponse({
@@ -21,7 +21,9 @@ class NewsResponse {
   Map<String, dynamic> toJson() => {
         "status": status,
         "totalResults": totalResults,
-        "articles": articles != null ? List<dynamic>.from(articles!.map((x) => x.toJson())) : [],
+        "articles": articles != null
+            ? List<dynamic>.from(articles!.map((x) => x.toJson()))
+            : [],
       };
 }
 
@@ -58,18 +60,21 @@ class NewsArticle {
       );
 
   factory NewsArticle.fromDbJson(Map<String, dynamic> json) => NewsArticle(
-    source: Source(
-      id: json["id"],
-      name: json["name"],
-    ),
-    author: json["author"] == null ? null : json["author"],
-    content: json["content"],
-    description: json["description"] == null ? null : json["description"],
-    publishedAt: DateTime.parse(json["publishedAt"]),
-    title: json["title"],
-    url: json["url"],
-    urlToImage: json["urlToImage"] == null ? null : json["urlToImage"],
-  );
+        source: Source(
+          id: json["id"],
+          name: json["name"],
+        ),
+        author: json["author"] == null ? null : json["author"],
+        content: json["content"],
+        description: json["description"] == null ? null : json["description"],
+        publishedAt: json['publishedAt'].toString().isInteger()
+            ? DateTime.fromMillisecondsSinceEpoch(
+                int.tryParse(json["publishedAt"])!)
+            : DateTime.parse(json["publishedAt"]),
+        title: json["title"],
+        url: json["url"],
+        urlToImage: json["urlToImage"] == null ? null : json["urlToImage"],
+      );
 
   Map<String, dynamic> toJson() => {
         "source": source?.toJson(),
@@ -90,7 +95,7 @@ class NewsArticle {
         "description": description == null ? null : description,
         "url": url,
         "urlToImage": urlToImage == null ? null : urlToImage,
-        "publishedAt": publishedAt?.toIso8601String(),
+        "publishedAt": publishedAt?.millisecondsSinceEpoch,
         "content": content == null ? null : content,
       };
 
