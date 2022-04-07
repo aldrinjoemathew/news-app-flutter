@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:news_app/src/models/filter_model.dart';
 import 'package:news_app/src/models/news_models.dart';
 import 'package:news_app/src/repositories/news_repo.dart';
 import 'package:news_app/src/utils/app_theme_utils.dart';
@@ -18,13 +19,14 @@ class NewsFeedPage extends StatefulWidget {
 
 class _NewsFeedPageState extends State<NewsFeedPage> {
   late FavoritesProvider _favorites = context.watch<FavoritesProvider>();
-  String? _selectedCategory;
+
+  /*late String? _selectedCategory =
+      context.watch<NewsCategoryModel>().selectedCategory;*/
   final PagingController<int, NewsArticle> _pagingController =
       PagingController(firstPageKey: 1);
 
   @override
   void initState() {
-    _selectedCategory = NewsData.getInstance().category;
     _pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });
@@ -100,7 +102,7 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
   }
 
   bool isSelected(String c) {
-    return this._selectedCategory == c;
+    return context.read<NewsCategoryModel>().selectedCategory == c;
   }
 
   void showCategoryFilter(BuildContext context) {
@@ -157,12 +159,7 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
   }
 
   void _onTapCategory(String category) {
-    if (category == _selectedCategory) {
-      _selectedCategory = null;
-    } else {
-      _selectedCategory = category;
-    }
-    NewsRepo.updateCategory(_selectedCategory);
+    context.read<NewsCategoryModel>().updateFilter(category);
     _pagingController.refresh();
     Navigator.of(context).pop();
   }
@@ -181,8 +178,8 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      final newItems =
-          await NewsRepo.fetchNewsPage(pageKey, category: _selectedCategory);
+      final newItems = await NewsRepo.fetchNewsPage(pageKey,
+          category: context.read<NewsCategoryModel>().selectedCategory);
       final isLastPage = newItems.length < NewsRepo.PAGE_SIZE;
       if (isLastPage) {
         _pagingController.appendLastPage(newItems);
@@ -284,8 +281,7 @@ class NewsListItem extends StatelessWidget {
               child: IconButton(
                 icon: Icon(Icons.share),
                 onPressed: () {
-                  if (newsItem.content != null)
-                    Share.share(newsItem.content!);
+                  if (newsItem.content != null) Share.share(newsItem.content!);
                 },
               ),
             )

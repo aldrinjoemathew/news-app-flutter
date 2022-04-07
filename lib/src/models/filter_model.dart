@@ -6,7 +6,11 @@ class NewsCategoryModel extends ChangeNotifier {
   get selectedCategory => _selectedCategory;
 
   void updateFilter(String category) {
-    this._selectedCategory = category;
+    if (category == _selectedCategory) {
+      _selectedCategory = null;
+    } else {
+      _selectedCategory = category;
+    }
     notifyListeners();
   }
 }
