@@ -15,7 +15,6 @@ class UserSettingsPage extends StatefulWidget {
 
 class _UserSettingsPageState extends State<UserSettingsPage> {
   late UserModel _userModel;
-  late SharedPreferences prefs;
 
   @override
   void initState() {
@@ -94,6 +93,6 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
   }
 
   void _getUserDetails() async {
-    prefs = await SharedPreferences.getInstance();
+    context.read<UserModel>().getCurrentUser();
   }
 }
