@@ -43,7 +43,6 @@ class NewsApp extends StatelessWidget {
           return MultiProvider(
             providers: [
               ChangeNotifierProvider(create: (context) => UserModel()),
-              ChangeNotifierProvider(create: (context) => LoginValidation()),
               ChangeNotifierProvider(
                   create: (context) => EditProfileValidation()),
               ChangeNotifierProvider(create: (context) => FavoritesProvider()),
