@@ -58,9 +58,6 @@ class _HomePageState extends State<HomePage> {
               showUnselectedLabels: false,
               onTap: (index) {
                 _onTabSelected(index);
-                _pageViewController.animateToPage(index,
-                    duration: Duration(milliseconds: 200),
-                    curve: Curves.bounceOut);
               },
               items: [
                 BottomNavigationBarItem(
@@ -114,6 +111,11 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _selectedIndex = index;
     });
+    _pageViewController.animateToPage(
+      index,
+      duration: Duration(milliseconds: 200),
+      curve: Curves.bounceOut,
+    );
   }
 
   void _openEditProfile() {
