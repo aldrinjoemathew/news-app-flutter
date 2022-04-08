@@ -9,7 +9,6 @@ import 'package:news_app/src/utils/app_theme_utils.dart';
 import 'package:news_app/src/utils/app_utils.dart';
 import 'package:news_app/src/utils/constants.dart';
 import 'package:news_app/src/validation/edit_profile_validation.dart';
-import 'package:news_app/src/validation/login_validation.dart';
 import 'package:provider/provider.dart';
 
 import 'src/ui/home.dart';
@@ -43,8 +42,6 @@ class NewsApp extends StatelessWidget {
           return MultiProvider(
             providers: [
               ChangeNotifierProvider(create: (context) => UserModel()),
-              ChangeNotifierProvider(
-                  create: (context) => EditProfileValidation()),
               ChangeNotifierProvider(create: (context) => FavoritesProvider()),
             ],
             child: MaterialApp(
@@ -70,7 +67,10 @@ class NewsApp extends StatelessWidget {
                     });
                   case AppRoutes.EditProfile:
                     return CupertinoPageRoute(builder: (context) {
-                      return EditProfilePage();
+                      return ChangeNotifierProvider(
+                        create: (_) => EditProfileValidation(),
+                        child: EditProfilePage(),
+                      );
                     });
                   default:
                     return null;

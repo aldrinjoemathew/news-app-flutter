@@ -45,164 +45,167 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     _validationService = Provider.of<EditProfileValidation>(context);
-    final profileImage = _profileImageFile != null
-        ? Image.file(
-            _profileImageFile!,
-            width: 150,
-            height: 150,
-            fit: BoxFit.fill,
-          )
-        : Image.asset(
-            "assets/ic_profile_dummy.png",
-            width: 150,
-            height: 150,
-            fit: BoxFit.fill,
-          );
-    final imageStack = Stack(
-      alignment: Alignment.bottomCenter,
-      children: [
-        profileImage,
-        Positioned(
-          bottom: 0,
-          right: 0,
-          left: 0,
-          height: 48,
-          child: TextButton(
-            style: TextButton.styleFrom(
-              backgroundColor: Colors.black.withOpacity(0.5),
-            ),
-            child: Text(
-              "Change image",
-              style:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-            ),
-            onPressed: () {
-              showModalBottomSheet(
-                  isScrollControlled: true,
-                  context: context,
-                  builder: (_) {
-                    return Wrap(
-                      children: [
-                        Column(
-                          children: [
-                            Row(
-                              children: [
-                                SizedBox(width: 10,),
-                                Expanded(
-                                  child: getAppFlatBtn('Take a picture', () {
-                                    Navigator.pop(context);
-                                    _takePicture();
-                                  }),
-                                ),
-                                SizedBox(width: 10,),
-                                Expanded(
-                                  child: getAppFlatBtn('Pick from gallery', () {
-                                    Navigator.pop(context);
-                                    _pickImage();
-                                  }),
-                                ),
-                                SizedBox(width: 10,),
-                              ],
-                            ),
-                            SizedBox(height: 10,),
-                          ]
-                        ),
-                      ],
-                    );
-                  });
-            },
-          ),
-        )
-      ],
-    );
-    final imageParent = Container(
-      alignment: Alignment.center,
-      child: ClipRRect(
-        borderRadius: BorderRadius.all(Radius.circular(32)),
-        child: imageStack,
-      ),
-    );
-    final List<Widget> listChildren = [
-      SizedBox(height: 50),
-      imageParent,
-    ];
-
-    listChildren.add(SizedBox(height: 8));
-    listChildren.add(TextField(
-      controller: _nameEditingController,
-      keyboardType: TextInputType.name,
-      textCapitalization: TextCapitalization.words,
-      onChanged: _validationService.changeName,
-      decoration: InputDecoration(
-          errorText: _validationService.name.error,
-          hintText: "Enter your full name",
-          labelText: "Full Name"),
-    ));
-    listChildren.add(TextFormField(
-      controller: _emailEditingController,
-      keyboardType: TextInputType.emailAddress,
-      onChanged: _validationService.changeEmailId,
-      decoration: InputDecoration(
-          errorText: _validationService.emailId.error,
-          hintText: "Enter your email ID",
-          labelText: "Email ID"),
-    ));
-    listChildren.add(TextFormField(
-      readOnly: true,
-      controller: _dobEditingController,
-      focusNode: _dobFocusNode,
-      enabled: true,
-      keyboardType: null,
-      decoration: InputDecoration(
-          errorText: _validationService.dob.error,
-          hintText: "yyyy-MM-dd",
-          labelText: "Date of Birth"),
-    ));
-    final saveBtn = getAppFlatBtn(
-      "Save",
-      _saving || !_validationService.isValid() ? null : _onClickSave,
-      disabledBtnColor: AppColors.green.withOpacity(0.5),
-      btnColor: AppColors.green,
-    );
-    final saveBtnWithLoader = Stack(
-      alignment: AlignmentDirectional.center,
-      children: [
-        SizedBox(width: double.infinity, child: saveBtn),
-        CircularProgressIndicator(
-          backgroundColor: Colors.white,
-          valueColor: AlwaysStoppedAnimation(AppColors.green),
-        )
-      ],
-    );
-    listChildren.add(Container(
-      padding: EdgeInsets.only(top: 32),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Expanded(
-              child: getAppFlatBtn("Cancel", _saving ? null : _onClickCancel,
-                  btnColor: AppColors.red)),
-          SizedBox(width: 16),
-          Expanded(
-            child: _saving ? saveBtnWithLoader : saveBtn,
-          ),
-        ],
-      ),
-    ));
-    final body = Container(
-      padding: EdgeInsets.all(16),
-      alignment: Alignment.center,
-      child: ListView(
-        children: listChildren,
-      ),
-    );
     return Scaffold(
       appBar: AppBar(
         title: Text("Edit Profile"),
       ),
-      body: body,
+      body: Container(
+        padding: EdgeInsets.all(16),
+        alignment: Alignment.center,
+        child: ListView(
+          children: [
+            SizedBox(height: 50),
+            Container(
+              alignment: Alignment.center,
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(32)),
+                child: Stack(
+                  alignment: Alignment.bottomCenter,
+                  children: [
+                    _profileImageFile != null
+                        ? Image.file(
+                            _profileImageFile!,
+                            width: 150,
+                            height: 150,
+                            fit: BoxFit.fill,
+                          )
+                        : Image.asset(
+                            "assets/ic_profile_dummy.png",
+                            width: 150,
+                            height: 150,
+                            fit: BoxFit.fill,
+                          ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      left: 0,
+                      height: 48,
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                          backgroundColor: Colors.black.withOpacity(0.5),
+                        ),
+                        child: Text(
+                          "Change image",
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold),
+                        ),
+                        onPressed: () {
+                          _showImagePicker(context);
+                        },
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 8),
+            TextField(
+              controller: _nameEditingController,
+              keyboardType: TextInputType.name,
+              textCapitalization: TextCapitalization.words,
+              onChanged: _validationService.changeName,
+              decoration: InputDecoration(
+                  errorText: _validationService.name.error,
+                  hintText: "Enter your full name",
+                  labelText: "Full Name"),
+            ),
+            TextFormField(
+              controller: _emailEditingController,
+              keyboardType: TextInputType.emailAddress,
+              onChanged: _validationService.changeEmailId,
+              decoration: InputDecoration(
+                  errorText: _validationService.emailId.error,
+                  hintText: "Enter your email ID",
+                  labelText: "Email ID"),
+            ),
+            TextFormField(
+              readOnly: true,
+              controller: _dobEditingController,
+              focusNode: _dobFocusNode,
+              enabled: true,
+              keyboardType: null,
+              decoration: InputDecoration(
+                  errorText: _validationService.dob.error,
+                  hintText: "yyyy-MM-dd",
+                  labelText: "Date of Birth"),
+            ),
+            Container(
+              padding: EdgeInsets.only(top: 32),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                      child: getAppFlatBtn(
+                          "Cancel", _saving ? null : _onClickCancel,
+                          btnColor: AppColors.red)),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: Stack(
+                      alignment: AlignmentDirectional.center,
+                      children: [
+                        SizedBox(
+                            width: double.infinity,
+                            child: getAppFlatBtn(
+                              "Save",
+                              _saving || !_validationService.isValid()
+                                  ? null
+                                  : _onClickSave,
+                              disabledBtnColor:
+                                  AppColors.green.withOpacity(0.5),
+                              btnColor: AppColors.green,
+                            )),
+                        if (_saving)
+                          CircularProgressIndicator(
+                            backgroundColor: Colors.white,
+                            valueColor: AlwaysStoppedAnimation(AppColors.green),
+                          )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
       backgroundColor: AppColors.beige,
     );
+  }
+
+  void _showImagePicker(BuildContext context) {
+    showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        builder: (_) {
+          return Wrap(
+            children: [
+              Column(children: [
+                Row(
+                  children: [
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: getAppFlatBtn('Take a picture', () {
+                        Navigator.pop(context);
+                        _takePicture();
+                      }),
+                    ),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: getAppFlatBtn('Pick from gallery', () {
+                        Navigator.pop(context);
+                        _pickImage();
+                      }),
+                    ),
+                    SizedBox(width: 10),
+                  ],
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+              ]),
+            ],
+          );
+        });
   }
 
   @override
@@ -302,7 +305,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         DateFormat(DateFormats.DateOfBirth).format(selectedDate!);
     print("Selected date: $dateString");
     _validationService.changeDob(dateString);
-    if (dateString?.isNotEmpty == true) {
+    if (dateString.isNotEmpty == true) {
       setState(() {
         _dobEditingController.text = dateString;
       });
