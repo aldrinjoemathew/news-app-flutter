@@ -23,6 +23,14 @@ ThemeData buildAppTheme() {
       errorColor: AppColors.errorRed,
       primaryIconTheme: _customIconTheme(base.iconTheme),
       iconTheme: _customIconTheme(base.iconTheme),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          primary: AppColors.sienna,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(8))),
+          padding: EdgeInsets.all(16),
+        )
+      ),
       textTheme: _getTextTheme(base.textTheme));
 }
 

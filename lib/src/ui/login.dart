@@ -1,14 +1,14 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:news_app/src/models/user_model.dart';
 import 'package:news_app/src/repositories/user_repo.dart';
-import 'package:news_app/src/utils/app_theme_utils.dart';
 import 'package:news_app/src/utils/app_utils.dart';
 import 'package:news_app/src/utils/constants.dart';
 import 'package:news_app/src/validation/login_validation.dart';
 import 'package:provider/provider.dart';
-import 'package:collection/collection.dart';
 
 import '../models/users.dart';
+import '../utils/app_theme_utils.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -21,11 +21,8 @@ class _LoginPageState extends State<LoginPage> {
   final _loginFontStyle = TextStyle(fontSize: 16);
   var _passwordShown = false;
   late LoginValidation _validationService;
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
+  final _passwordFocusNode = FocusNode();
+  final _submitBtnFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +32,11 @@ class _LoginPageState extends State<LoginPage> {
         alignment: Alignment.center,
         padding: EdgeInsets.all(50),
         child: ListView(shrinkWrap: true, children: [
-          _getLoginLogo(),
+          Image(
+            width: 100,
+            height: 100,
+            image: AssetImage("assets/ic_news.png"),
+          ),
           Padding(padding: EdgeInsets.fromLTRB(0, 32, 0, 0)),
           TextField(
             autofocus: false,
@@ -47,6 +48,7 @@ class _LoginPageState extends State<LoginPage> {
               hintText: "Enter email",
               errorText: _validationService.emailId.error,
             ),
+            textInputAction: TextInputAction.next,
           ),
           Padding(padding: EdgeInsets.fromLTRB(0, 8, 0, 0)),
           TextField(
@@ -56,17 +58,51 @@ class _LoginPageState extends State<LoginPage> {
             obscureText: _passwordShown ? false : true,
             onChanged: _validationService.changePassword,
             decoration: InputDecoration(
-                suffixIcon: IconButton(
-                    icon: Icon(
-                      _passwordShown ? Icons.visibility : Icons.visibility_off,
-                    ),
-                    onPressed: _showPassword),
-                labelText: "Password",
-                hintText: "Enter password",
-                errorText: _validationService.password.error),
+              suffixIcon: IconButton(
+                  icon: Icon(
+                    _passwordShown ? Icons.visibility : Icons.visibility_off,
+                  ),
+                  onPressed: _showPassword),
+              labelText: "Password",
+              hintText: "Enter password",
+              errorText: _validationService.password.error,
+            ),
+            textInputAction: TextInputAction.done,
+            focusNode: _passwordFocusNode,
+            onSubmitted: (_) {
+              _passwordFocusNode.unfocus();
+              FocusScope.of(context).requestFocus(_submitBtnFocusNode);
+            },
           ),
           Padding(padding: EdgeInsets.fromLTRB(0, 32, 0, 0)),
-          _getLoginBtn(),
+          ElevatedButton(
+            focusNode: _submitBtnFocusNode,
+            child: _loading
+                ? SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(
+                      color: AppColors.white,
+                      strokeWidth: 3.0,
+                    ))
+                : Text(
+                    "Log in",
+                    style: TextStyle(color: AppColors.white, fontSize: 16),
+                  ),
+            onPressed: _validationService.isValid()
+                ? () {
+                    if (_loading) {
+                      //Do nothing
+                    } else {
+                      _validationService.submitForm();
+                      _loginUser(
+                        _validationService.emailId.value,
+                        _validationService.password.value,
+                      );
+                    }
+                  }
+                : null,
+          ),
           SizedBox(
             height: 16,
           ),
@@ -110,9 +146,11 @@ class _LoginPageState extends State<LoginPage> {
   void _loginUser(String? email, String? password) async {
     if (_loading) return;
     setLoading(true);
+    await Future.delayed(Duration(seconds: 2));
     email = email?.trim().toLowerCase();
-    User? user = UserRepo().getUsers().firstWhereOrNull(
-        (element) => element.email.toLowerCase() == email);
+    User? user = UserRepo()
+        .getUsers()
+        .firstWhereOrNull((element) => element.email.toLowerCase() == email);
     if (user == null) {
       showOkAlert(context, "Error", "User not found");
       setLoading(false);
@@ -133,40 +171,7 @@ class _LoginPageState extends State<LoginPage> {
     Navigator.of(context).pushReplacementNamed(AppRoutes.Home);
   }
 
-  Widget _getLoginLogo() {
-    return Image(
-        width: 100, height: 100, image: AssetImage("assets/ic_news.png"));
-  }
-
   void _pushPasswordResetPage() {
     print("Reset password page");
-  }
-
-  Widget _getLoginBtn() {
-    final List<Widget> stackChildren = [
-      SizedBox(
-        width: double.infinity,
-        child: getAppFlatBtn(
-          "Log in",
-          _validationService.isValid()
-              ? () {
-                  _validationService.submitForm();
-                  _loginUser(
-                    _validationService.emailId.value,
-                    _validationService.password.value,
-                  );
-                }
-              : null,
-        ),
-      )
-    ];
-    if (_loading) {
-      stackChildren.add(Container(
-        alignment: Alignment.center,
-        padding: EdgeInsets.all(6),
-        child: CircularProgressIndicator(),
-      ));
-    }
-    return Stack(children: stackChildren);
   }
 }
