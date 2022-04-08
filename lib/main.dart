@@ -5,6 +5,7 @@ import 'package:news_app/src/models/news_models.dart';
 import 'package:news_app/src/models/user_model.dart';
 import 'package:news_app/src/ui/edit_profile.dart';
 import 'package:news_app/src/ui/news_detail.dart';
+import 'package:news_app/src/ui/signup.dart';
 import 'package:news_app/src/utils/app_theme_utils.dart';
 import 'package:news_app/src/utils/app_utils.dart';
 import 'package:news_app/src/utils/constants.dart';
@@ -56,6 +57,10 @@ class NewsApp extends StatelessWidget {
               },
               onGenerateRoute: (routeSettings) {
                 switch (routeSettings.name) {
+                  case AppRoutes.Signup:
+                    return CupertinoPageRoute(builder: (context) {
+                      return SignupScreen();
+                    });
                   case AppRoutes.NewsDetail:
                     return CupertinoPageRoute(builder: (context) {
                       return NewsDetailPage(

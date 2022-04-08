@@ -122,12 +122,15 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(
                 height: 16,
               ),
-              Text(
-                "Don't have an account? Sign up",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    decoration: TextDecoration.underline,
-                    fontWeight: FontWeight.bold),
+              GestureDetector(
+                child: Text(
+                  "Don't have an account? Sign up",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      decoration: TextDecoration.underline,
+                      fontWeight: FontWeight.bold),
+                ),
+                onTap: _pushSignupPage,
               )
             ]),
           ),
@@ -171,5 +174,9 @@ class _LoginPageState extends State<LoginPage> {
 
   void _pushPasswordResetPage() {
     print("Reset password page");
+  }
+
+  void _pushSignupPage() {
+    Navigator.of(context).pushNamed(AppRoutes.Signup);
   }
 }

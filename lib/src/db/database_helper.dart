@@ -69,26 +69,46 @@ class DatabaseHelper {
 
   Future<bool> isUsersAvailable() async {
     var db = await this.db;
-    return (Sqflite.firstIntValue(
-                await db.rawQuery('select count(*) from users')) ??
-            0) >
-        0;
+    var count =
+        Sqflite.firstIntValue(await db.rawQuery('select count(*) from users'));
+    return count != null && count > 0;
   }
 
   Future<User?> login(String email, String password) async {
     final Database db = await this.db;
-    final List<Map<String, Object?>> queryResult = await db.query('users',
-        where: 'email=? and password=?',
-        whereArgs: [email, password],
-        limit: 1);
+    final List<Map<String, Object?>> queryResult = await db.query(
+      'users',
+      where: 'email=? and password=?',
+      whereArgs: [email, password],
+      limit: 1,
+    );
     if (queryResult.isEmpty)
       return null;
     else
       return User.fromJson(queryResult.first);
   }
-  
+
   Future updateUser(User user) async {
     final Database db = await this.db;
-    await db.update('users', user.toJson(), where: 'email = ?', whereArgs: [user.email]);
+    await db.update(
+      'users',
+      user.toJson(),
+      where: 'email = ?',
+      whereArgs: [user.email],
+    );
+  }
+
+  Future<User?> getUserDetails(String email) async {
+    final Database db = await this.db;
+    final List<Map<String, Object?>> queryResult = await db.query(
+      'users',
+      where: 'email=?',
+      whereArgs: [email],
+      limit: 1,
+    );
+    if (queryResult.isEmpty)
+      return null;
+    else
+      return User.fromJson(queryResult.first);
   }
 }
