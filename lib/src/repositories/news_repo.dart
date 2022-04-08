@@ -65,7 +65,7 @@ class NewsRepo {
       {bool refresh = false, bool paginate = false, String? category}) async {
     if (!refresh &&
         !paginate &&
-        NewsData.getInstance().newsList?.isNotEmpty == true) {
+        NewsData.getInstance().newsList.isNotEmpty == true) {
       return Resource.success(NewsData.getInstance().newsList);
     }
     if (!await hasNetworkConnection()) {
@@ -138,9 +138,9 @@ class NewsData {
   void updateFavorites(NewsArticle newsItem) {
     if (favorites == null) favorites = <NewsArticle>[];
     if (isFavorite(newsItem)) {
-      favorites?.remove(newsItem);
+      favorites.remove(newsItem);
     } else {
-      favorites?.insert(0, newsItem);
+      favorites.insert(0, newsItem);
     }
   }
 

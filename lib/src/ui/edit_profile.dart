@@ -243,12 +243,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
     final user = userFromJson(prefs.getString("user") ?? '');
     setState(() {
       _user = user;
-      _nameEditingController.text = _user?.name ?? '';
-      _emailEditingController.text = _user?.email ?? '';
-      _dobEditingController.text = _user?.dob ?? '';
+      _nameEditingController.text = _user.name;
+      _emailEditingController.text = _user.email;
+      _dobEditingController.text = _user.dob ?? '';
       _validationService.setInitialValues(
           name: _user.name, email: _user.email, dob: _user.dob);
-      if (user?.profileImagePath?.isNotEmpty == true) {
+      if (user.profileImagePath?.isNotEmpty == true) {
         _profileImageFile = File(user.profileImagePath!);
       }
     });

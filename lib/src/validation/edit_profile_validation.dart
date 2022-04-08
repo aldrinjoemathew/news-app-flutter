@@ -23,7 +23,7 @@ class EditProfileValidation with ChangeNotifier {
 
   // Setters
   void changeName(String value) {
-    if (value?.isEmpty != false) {
+    if (value.isEmpty != false) {
       _name = ValidationItem(null, "Name must not be empty");
     } else {
       _name = ValidationItem(value, null);
@@ -44,12 +44,12 @@ class EditProfileValidation with ChangeNotifier {
 
   void changeDob(String value) {
     print("change dob");
-    if (value?.isEmpty != false) {
+    if (value.isEmpty != false) {
       _dob = ValidationItem(null, "DOB must not be empty");
     } else {
       try {
         DateFormat(DateFormats.DateOfBirth).parse(value);
-      } on FormatException catch (e) {
+      } on FormatException {
         _dob = ValidationItem(null, "Invalid date format");
         notifyListeners();
         return;
