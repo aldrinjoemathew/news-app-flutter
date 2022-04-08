@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
                 _pages[1].page,
                 _pages[2].page,
               ],
-              onPageChanged: _onTabSelected,
+              onPageChanged: _onPageChanged,
             ),
             bottomNavigationBar: BottomNavigationBar(
               currentIndex: _selectedIndex,
@@ -108,14 +108,18 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _onTabSelected(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    if (_selectedIndex == index) return;
     _pageViewController.animateToPage(
       index,
       duration: Duration(milliseconds: 200),
       curve: Curves.bounceOut,
     );
+  }
+
+  void _onPageChanged(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 
   void _openEditProfile() {
