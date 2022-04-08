@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:news_app/src/models/users.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../db/database_helper.dart';
+
 class UserModel extends ChangeNotifier {
+  final handler = DatabaseHelper();
   User? _user;
   bool _isLoggedIn = false;
 
@@ -42,5 +45,6 @@ class UserModel extends ChangeNotifier {
     });
     notifyListeners();
     print("notified: ${this._user?.name}");
+    handler.updateUser(user);
   }
 }

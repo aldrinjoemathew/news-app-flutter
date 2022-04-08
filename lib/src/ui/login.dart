@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:news_app/src/models/user_model.dart';
 import 'package:news_app/src/repositories/user_repo.dart';
@@ -22,6 +21,7 @@ class _LoginPageState extends State<LoginPage> {
   var _passwordShown = false;
   final _passwordFocusNode = FocusNode();
   final _submitBtnFocusNode = FocusNode();
+  final _userRepo = UserRepo();
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +61,9 @@ class _LoginPageState extends State<LoginPage> {
                 decoration: InputDecoration(
                   suffixIcon: IconButton(
                       icon: Icon(
-                        _passwordShown ? Icons.visibility : Icons.visibility_off,
+                        _passwordShown
+                            ? Icons.visibility
+                            : Icons.visibility_off,
                       ),
                       onPressed: _showPassword),
                   labelText: "Password",
@@ -151,16 +153,9 @@ class _LoginPageState extends State<LoginPage> {
     setLoading(true);
     await Future.delayed(Duration(seconds: 2));
     email = email?.trim().toLowerCase();
-    User? user = UserRepo()
-        .getUsers()
-        .firstWhereOrNull((element) => element.email.toLowerCase() == email);
+    User? user = await _userRepo.loginUser(email, password);
     if (user == null) {
-      showOkAlert(context, "Error", "User not found");
-      setLoading(false);
-      return;
-    }
-    if (user.password != password) {
-      showOkAlert(context, "Error", "Password incorrect");
+      showOkAlert(context, "Error", 'Please check your email and password.');
       setLoading(false);
       return;
     }
